@@ -1,0 +1,45 @@
+.tap {
+   border-left: 1px solid #eee;
+   border-right: 1px solid #eee;
+}
+
+.label-outer {
+  width:50px;
+  height: 210px;
+  position: absolute;
+  display: inline-block;
+  left: -50px;
+}
+
+.label-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: #999;
+}
+
+.rotate-cw {
+  -moz-transform: translateX(-50%) translateY(-50%) rotate(90deg);
+  -webkit-transform: translateX(-50%) translateY(-50%) rotate(90deg);
+  transform:  translateX(-50%) translateY(-50%) rotate(90deg);
+}
+
+.beer-label {
+   width: 210px;
+   height: 210px;
+   border-radius: 50%;
+}
+
+.beer-detail {
+  height: 210px;
+}
+
+.absolute-bottom {
+  position: absolute;
+  bottom: 0;
+}
+
+.beer-specs {
+  border-left: 1px dotted #000;
+  height: 210px;
+}
