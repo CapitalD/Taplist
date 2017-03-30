@@ -14,7 +14,7 @@
           <p class="label-inner rotate-cw">{{tap.label}}</p>
         </div>
         {% if tap.beer %}
-        <div class="beer-label" style="background-color:#F1D744;"></div>
+        <div class="beer-label" id="label_tap{{tap.id}}"></div>
         {% endif %}
       </div>
 
@@ -48,4 +48,11 @@
 
   </div>
 </div>
+{% endblock %}
+{% block endbody %}
+<script type="text/javascript">
+{% for tap in location.taps %}
+  $("#label_tap{{tap.id}}").css("background-color",get_hex_from_ebc({{tap.beer.colour}}));
+{% endfor %}
+</script>
 {% endblock %}
