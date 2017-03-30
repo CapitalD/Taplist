@@ -12,3 +12,6 @@ migrate = Migrate(app, db)
 
 from . import views
 from . import models
+
+from .numeraljs import numeraljs
+app.jinja_env.globals['numeraljs'] = numeraljs

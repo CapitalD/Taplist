@@ -5,8 +5,10 @@ class Tap(db.Model):
     label = db.Column(db.String(255))
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     beer_id = db.Column(db.Integer, db.ForeignKey('beer.id'))
+    price_pint = db.Column(db.Float, default=0)
+    price_tulip = db.Column(db.Float, default=0)
+    price_jug = db.Column(db.Float, default=0)
     beer = db.relationship('Beer', backref='beer')
-
 
     def __repr__(self):
         return '<Tap %r>' % (self.label)
