@@ -2,33 +2,42 @@
 {% block title %}{{location.name}}{% endblock %}
 {% block body %}
 
-<h2>{{location.name}}</h2>
+<h2>On tap at {{location.name}}</h2>
 
 <div class="row">
   <div class="col-xs-10 col-xs-offset-1">
 
-    {% for tap in location.taps %}
+    {% for tap in location.taps|sort(attribute='id') %}
     <div class="row tap">
       <div class="col-xs-3">
         <div class="label-outer">
           <p class="label-inner rotate-cw">{{tap.label}}</p>
         </div>
+        {% if tap.beer %}
         <div class="beer-label" style="background-color:#F1D744;"></div>
+        {% endif %}
       </div>
 
+
+      {% if tap.beer %}
       <div class="col-xs-7 beer-detail">
-        <h2></h2>
-        <h4></h4>
-        <h4 class="absolute-bottom"></h4>
+        <h2>{{tap.beer.name}}</h2>
+        <h4>{{tap.beer.style}}</h4>
+        <h4 class="absolute-bottom">{{tap.beer.brewery.name}}</h4>
       </div>
 
       <div class="col-xs-2 beer-specs">
-        <h3 class="text-center">%</h3>
+        <h3 class="text-center">{{tap.beer.abv}}%</h3>
         <div class="absolute-bottom">
           <h4><img src="{{ url_for('static', filename='img/noun_27669_cc.svg') }}" alt="Pint" width="40px" height="40px"></h4>
           <h4><img src="{{ url_for('static', filename='img/noun_27670_cc.svg') }}" alt="Tulip" width="40px" height="40px"></h4>
         </div>
       </div>
+      {% else %}
+      <div class="col-xs-9 beer-detail">
+        <h5>Nothing pouring</h5>
+      </div>
+      {% endif %}
     </div>
 
     <hr>
