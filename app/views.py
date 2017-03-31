@@ -1,7 +1,8 @@
 from flask import render_template, redirect, url_for
-from . import app, db
-from models import Location, Tap
-from forms import NewLocationForm
+from . import app, db, login_manager, bcrypt
+from flask_login import login_user, logout_user, current_user, login_required
+from models import Location, Tap, Person
+from forms import NewLocationForm, LoginForm
 
 @app.route('/')
 def index():
@@ -19,9 +20,40 @@ def view_location(id):
                             location=location,
                             all_locations=all_locations)
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = Person.query.filter_by(email=form.email.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                user.authenticated = True
+                db.session.add(user)
+                db.session.commit()
+                login_user(user) #, remember=True)
+                return redirect(url_for("index"))
+    return render_template("login.html", form=form)
+
 ## ADMINISTRATION PAGES ##
 
+@login_manager.user_loader
+def user_loader(user_id):
+    return Person.query.get(user_id)
+
+
+
+@app.route("/logout", methods=["GET"])
+@login_required
+def logout():
+    user = current_user
+    user.authenticated = False
+    db.session.add(user)
+    db.session.commit()
+    logout_user()
+    return redirect(url_for("index"))
+
 @app.route('/location/new', methods=['GET','POST'])
+@login_required
 def add_location():
     form = NewLocationForm()
     if form.validate_on_submit():
