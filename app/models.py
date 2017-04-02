@@ -50,6 +50,9 @@ class Person(db.Model):
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     authenticated = db.Column(db.Boolean, default=False, nullable=False)
+    admin = db.Column(db.Boolean, default=False, nullable=False)
+    manager = db.Column(db.Boolean, default=False, nullable=False)
+    brewer = db.Column(db.Boolean, default=False, nullable=False)
 
     def is_active(self):
         return True
@@ -62,6 +65,15 @@ class Person(db.Model):
 
     def is_anonymous(self):
         return False
+
+    def is_admin(self):
+        return self.admin
+
+    def is_manager(self):
+        return self.manager
+
+    def is_brewer(self):
+        return self.brewer
 
     def __repr__(self):
         return '<Person %r>' % (self.email)

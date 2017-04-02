@@ -1,0 +1,46 @@
+
+{% extends "layout.html" %}
+
+{% block body %}
+  <h1>Edit your profile</h1>
+  <form action="" method="post" name="login">
+    {{ form.hidden_tag() }}
+    <h3>Your profile details</h3>
+    <p>
+      <label for="email">
+        Email
+          {{ form.email(size=80, class_="form-control") }}
+          {% for error in form.email.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+      </label>
+    </p>
+
+    <h3>Change your password</h3>
+    <p>Leave these fields blank if you do not want to change your password</p>
+    <fieldset style="padding-left: 1.5em">
+      <p>
+        <label for="password">
+          Password
+            {{ form.password(size=80, class_="form-control") }}
+            {% for error in form.password.errors %}
+              <span style="color: #f33;">[{{ error }}]</span>
+            {% endfor %}
+        </label>
+      </p>
+      <p>
+        <label for="confirm_password">
+          Confirm password
+            {{ form.confirm_password(size=80, class_="form-control") }}
+            {% for error in form.confirm_password.errors %}
+              <span style="color: #f33;">[{{ error }}]</span>
+            {% endfor %}
+        </label>
+      </p>
+    </fieldset>
+    <p>
+      <a href="{{ url_for('index') }}">Cancel</a> |
+      <input type="submit" name="submit" value="Edit profile" class="btn btn-default">
+    </p>
+  </form>
+{% endblock %}

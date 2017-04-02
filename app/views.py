@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for
 from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person
-from forms import NewLocationForm, LoginForm
+from forms import NewLocationForm, LoginForm, EditProfile
 
 @app.route('/')
 def index():
@@ -41,7 +41,6 @@ def user_loader(user_id):
     return Person.query.get(user_id)
 
 
-
 @app.route("/logout", methods=["GET"])
 @login_required
 def logout():
@@ -51,6 +50,7 @@ def logout():
     db.session.commit()
     logout_user()
     return redirect(url_for("index"))
+
 
 @app.route('/location/new', methods=['GET','POST'])
 @login_required
@@ -63,4 +63,24 @@ def add_location():
         return redirect(url_for('view_location', id=location.id))
     return render_template('new_location.html',
                             title='Add location',
+                            form=form)
+
+
+@app.route('/person/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_profile(id):
+    form = EditProfile()
+    if form.validate_on_submit():
+        person = Person.query.get_or_404(id)
+        person.email = form.email.data
+        if len(form.password.data) > 0:
+            person.password = bcrypt.generate_password_hash(form.password.data)
+        db.session.add(person)
+        db.session.commit()
+        return redirect(url_for("index"))
+    person = Person.query.get_or_404(id)
+    form.email.data = person.email
+    return render_template('edit_profile.html',
+                            title='Edit profile',
+                            person=person,
                             form=form)
