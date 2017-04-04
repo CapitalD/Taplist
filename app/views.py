@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, abort
 from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person
@@ -55,6 +55,8 @@ def logout():
 @app.route('/location/new', methods=['GET','POST'])
 @login_required
 def add_location():
+    if not current_user.admin:
+        return abort(401)
     form = NewLocationForm()
     if form.validate_on_submit():
         location = Location(name=form.name.data, address=form.address.data)
@@ -75,6 +77,10 @@ def edit_profile(id):
         person.email = form.email.data
         if len(form.password.data) > 0:
             person.password = bcrypt.generate_password_hash(form.password.data)
+        if current_user.admin:
+            person.admin = form.admin.data
+            person.manager = form.manager.data
+            person.brewer = form.brewer.data
         db.session.add(person)
         db.session.commit()
         return redirect(url_for("index"))
