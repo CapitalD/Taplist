@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, abort
+from flask import render_template, redirect, url_for, abort, jsonify, request
 from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person
@@ -90,3 +90,21 @@ def edit_profile(id):
                             title='Edit profile',
                             person=person,
                             form=form)
+
+@app.route('/location/<id>/taps', methods=['GET', 'POST'])
+@login_required
+def manage_taps(id):
+    taps = Location.query.get_or_404(id).taps
+    return render_template('manage_taps.html',
+                            title='Manage taps',
+                            taps=taps)
+## AJAX ##
+
+@app.route('/tap/<id>/clear', methods=['GET'])
+@login_required
+def clear_tap(id):
+    tap = Tap.query.get_or_404(id)
+    tap.beer = None
+    db.session.add(tap)
+    db.session.commit()
+    return redirect(url_for('manage_taps', id=tap.location.id))

@@ -48,7 +48,7 @@
                   <li role="separator" class="divider"></li>
                   {% endif %}
                   {% if current_user.is_admin or current_user.is_manager %}
-                  <li><a href="#"><i>Manage taps</i></a></li>
+                  <li><a href="{{ url_for('manage_taps', id=1) }}">Manage taps</a></li>
                   <li><a href="#"><i>Manage location</i></a></li>
                   <li role="separator" class="divider"></li>
                   {% endif %}
@@ -85,6 +85,8 @@
     <script src="{{ url_for('static', filename='js/lib/jquery-3.2.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/lib/bootstrap.min.js') }}"></script>
     <script type="text/javascript">
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe}};
+
       $('button[name="login"]').on('click', function() {
         window.location.href = "{{url_for('login')}}";
       });
