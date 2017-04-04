@@ -39,13 +39,13 @@
       </p>
     </fieldset>
 
-    {% if current_user.admin %}
+    {% if current_user.is_admin %}
     <h3>Roles</h3>
     <p>
       <label for="admin">
-        {{ form.admin(checked=person.admin) }}
+        {{ form.is_admin(checked=person.is_admin) }}
         Admin?
-        {% for error in form.admin.errors %}
+        {% for error in form.is_admin.errors %}
           <span style="color: #f33;">[{{ error }}]</span>
         {% endfor %}
       </label>
@@ -53,9 +53,9 @@
 
     <p>
       <label for="manager">
-        {{ form.manager(checked=person.manager) }}
+        {{ form.is_manager(checked=person.is_manager) }}
         Bar manager?
-        {% for error in form.manager.errors %}
+        {% for error in form.is_manager.errors %}
           <span style="color: #f33;">[{{ error }}]</span>
         {% endfor %}
       </label>
@@ -63,9 +63,9 @@
 
     <p>
       <label for="brewer">
-        {{ form.brewer(checked=person.brewer) }}
+        {{ form.is_brewer(checked=person.is_brewer) }}
         Brewer?
-        {% for error in form.brewer.errors %}
+        {% for error in form.is_brewer.errors %}
           <span style="color: #f33;">[{{ error }}]</span>
         {% endfor %}
       </label>

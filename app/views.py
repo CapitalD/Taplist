@@ -55,7 +55,7 @@ def logout():
 @app.route('/location/new', methods=['GET','POST'])
 @login_required
 def add_location():
-    if not current_user.admin:
+    if not current_user.is_admin:
         return abort(401)
     form = NewLocationForm()
     if form.validate_on_submit():
@@ -77,10 +77,10 @@ def edit_profile(id):
         person.email = form.email.data
         if len(form.password.data) > 0:
             person.password = bcrypt.generate_password_hash(form.password.data)
-        if current_user.admin:
-            person.admin = form.admin.data
-            person.manager = form.manager.data
-            person.brewer = form.brewer.data
+        if current_user.is_admin:
+            person.is_admin = form.is_admin.data
+            person.is_manager = form.is_manager.data
+            person.is_brewer = form.is_brewer.data
         db.session.add(person)
         db.session.commit()
         return redirect(url_for("index"))
