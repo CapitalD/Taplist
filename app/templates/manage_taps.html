@@ -24,7 +24,7 @@
       {% else %}
       <div class="col-xs-6"></div>
       <div class="col-xs-4">
-        <button type="button" name="tap_keg" class="btn btn-default" data-tap-id="{{tap.id}}">Tap a keg</button>
+        <button type="button" name="tap_keg" class="btn btn-default" data-toggle="modal" data-target="#tap-keg-modal" data-tap-id="{{tap.id}}">Tap a keg</button>
       </div>
       {% endif %}
     </div>
@@ -33,6 +33,39 @@
 
     {% endfor %}
 
+  </div>
+</div>
+
+<div class="modal fade" id="tap-keg-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <form action="" method="post" name="manage_taps">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Tap a keg</h4>
+        </div>
+        <div class="modal-body">
+          {{ form.hidden_tag() }}
+          <p>
+            <label for="brewery">
+              Brewery
+                {{ form.brewery(class_="form-control") }}
+            </label>
+          </p>
+
+          <p>
+            <label for="beer">
+              Beer
+                {{ form.beer(class_="form-control", disabled=true) }}
+            </label>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <input type="submit" class="btn btn-primary" value="Tap keg">
+        </div>
+      </div>
+    </form>
   </div>
 </div>
 {% endblock %}
@@ -44,6 +77,37 @@
 
 $("button[name='clear_tap']").on('click', function() {
   window.location.href = $SCRIPT_ROOT + "/tap/" + $(this).data("tap-id") + "/clear";
+});
+
+$("button[name='tap_keg']").on('click', function() {
+  $("#tap_id").val($(this).data("tap-id"));
+  $("form[name='manage_taps']").attr("action", $SCRIPT_ROOT + "/tap/" + $(this).data("tap-id") + "/set");
+});
+
+$("select#brewery").on('change', function() {
+  if (isNaN($(this).val())) {
+    $("#beer").empty();
+    $("#beer").append(
+      $("<option></option>").attr(
+        "value", 0).text("Choose a brewery before choosing a beer")
+    );
+    $("#beer").prop("disabled", true);
+    return false;
+  }
+
+  $.getJSON($SCRIPT_ROOT + '/brewery/' + $("select[name='brewery']").val() + '/beers',
+    {},
+    function(data) {
+      $("#beer").empty();
+      for (i = 0; i < data.length; i++) {
+        $("#beer").append(
+          $("<option></option>").attr(
+            "value", data[i][0]).text(data[i][1])
+        );
+      }
+    });
+    $("#beer").prop("disabled", false)
+    return false;
 });
 </script>
 {% endblock %}

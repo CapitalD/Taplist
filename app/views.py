@@ -1,8 +1,8 @@
 from flask import render_template, redirect, url_for, abort, jsonify, request
 from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
-from models import Location, Tap, Person
-from forms import NewLocationForm, LoginForm, EditProfile
+from models import Location, Tap, Person, Brewery, Beer
+from forms import NewLocationForm, LoginForm, EditProfile, TapKeg
 
 @app.route('/')
 def index():
@@ -91,14 +91,18 @@ def edit_profile(id):
                             person=person,
                             form=form)
 
-@app.route('/location/<id>/taps', methods=['GET', 'POST'])
+@app.route('/location/<id>/taps', methods=['GET'])
 @login_required
 def manage_taps(id):
+    form = TapKeg()
+    form.brewery.query = Brewery.query.order_by('name')
+    form.beer.query = Beer.query.order_by('name')
     taps = Location.query.get_or_404(id).taps
     return render_template('manage_taps.html',
                             title='Manage taps',
-                            taps=taps)
-## AJAX ##
+                            taps=taps,
+                            form=form)
+
 
 @app.route('/tap/<id>/clear', methods=['GET'])
 @login_required
@@ -108,3 +112,27 @@ def clear_tap(id):
     db.session.add(tap)
     db.session.commit()
     return redirect(url_for('manage_taps', id=tap.location.id))
+
+
+@app.route('/tap/<id>/set', methods=['POST'])
+@login_required
+def tap_keg(id):
+    tap = Tap.query.get_or_404(id)
+    form = TapKeg(request.form)
+    form.brewery.query = Brewery.query.order_by('name')
+    form.beer.query = Beer.query.order_by('name')
+    if form.validate_on_submit():
+        tap.beer = form.beer.data
+        db.session.add(tap)
+        db.session.commit()
+        return redirect(url_for('manage_taps', id=tap.location.id))
+    return "didn't validate"
+
+## AJAX ##
+
+@app.route('/brewery/<id>/beers', methods=['GET'])
+@login_required
+def get_beers_by_brewery(id):
+    brewery = Brewery.query.get_or_404(id)
+    beers = [(b.id, b.name) for b in brewery.beers]
+    return jsonify(beers)
