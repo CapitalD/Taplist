@@ -7,7 +7,7 @@ from forms import NewLocationForm, LoginForm, EditProfile, TapKeg
 @app.route('/')
 def index():
     all_locations = Location.query.all()
-    return render_template("index.html",
+    return render_template('index.html',
                             all_locations=all_locations)
 
 @app.route('/location/<id>', methods=['GET'])
@@ -32,7 +32,9 @@ def login():
                 db.session.commit()
                 login_user(user) #, remember=True)
                 return redirect(url_for("index"))
-    return render_template("login.html", form=form)
+    return render_template('login.html',
+                            title='Log in',
+                            form=form)
 
 ## ADMINISTRATION PAGES ##
 
