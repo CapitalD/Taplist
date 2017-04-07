@@ -5,7 +5,7 @@
 
 .label-outer {
   width:50px;
-  height: 210px;
+  height: 130px;
   position: absolute;
   display: inline-block;
   left: -50px;
@@ -25,13 +25,14 @@
 }
 
 .beer-label {
-   width: 210px;
-   height: 210px;
+   width: 130px;
+   height: 130px;
    border-radius: 50%;
+   background: #ffffff;
 }
 
 .beer-detail {
-  height: 210px;
+  height: 130px;
 }
 
 .absolute-bottom {
@@ -41,5 +42,5 @@
 
 .beer-specs {
   border-left: 1px dotted #000;
-  height: 210px;
+  height: 130px;
 }

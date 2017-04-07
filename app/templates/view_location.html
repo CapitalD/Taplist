@@ -9,7 +9,7 @@
 
     {% for tap in location.taps|sort(attribute='id') %}
     <div class="row tap">
-      <div class="col-xs-3">
+      <div class="col-xs-2">
         <div class="label-outer">
           <p class="label-inner rotate-cw">{{tap.label}}</p>
         </div>
@@ -20,7 +20,7 @@
 
 
       {% if tap.beer %}
-      <div class="col-xs-7 beer-detail">
+      <div class="col-xs-8 beer-detail">
         <h2>{{tap.beer.name}}</h2>
         <h4>{{tap.beer.style}}</h4>
         <h4 class="absolute-bottom">{{tap.beer.brewery.name}}</h4>
@@ -38,7 +38,7 @@
         </div>
       </div>
       {% else %}
-      <div class="col-xs-9 beer-detail"></div>
+      <div class="col-xs-10 beer-detail"></div>
       {% endif %}
     </div>
 
@@ -52,7 +52,15 @@
 {% block endbody %}
 <script type="text/javascript">
 {% for tap in location.taps %}
-  $("#label_tap{{tap.id}}").css("background-color",get_hex_from_ebc({{tap.beer.colour}}));
+  var beer_colour = get_hex_from_ebc({{tap.beer.colour}});
+  console.log(beer_colour);
+  $("#label_tap{{tap.id}}").css({
+    "background": "-moz-linear-gradient(top, #ffffff 0%, " + beer_colour + " 100%)",
+    "background": "-webkit-linear-gradient(top, #ffffff 0%, " + beer_colour + " 100%)",
+    "background": "linear-gradient(to bottom, #ffffff 0%, " + beer_colour + " 100%)",
+    "filter": "progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='" + beer_colour + "',GradientType=0)"
+  });
+//  $("#label_tap{{tap.id}}").css("background-color",get_hex_from_ebc({{tap.beer.colour}}));
 {% endfor %}
 </script>
 {% endblock %}
