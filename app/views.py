@@ -4,11 +4,13 @@ from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person, Brewery, Beer
 from forms import NewLocationForm, LoginForm, EditProfile, TapKeg, NewTap
 
+
 @app.route('/')
 def index():
     all_locations = Location.query.all()
     return render_template('index.html',
                             all_locations=all_locations)
+
 
 @app.route('/location/<id>', methods=['GET'])
 def view_location(id):
@@ -19,6 +21,7 @@ def view_location(id):
                             title=location.name,
                             location=location,
                             all_locations=all_locations)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -93,6 +96,7 @@ def edit_profile(id):
                             person=person,
                             form=form)
 
+
 @app.route('/location/<id>/taps', methods=['GET'])
 @login_required
 def manage_taps(id):
@@ -130,7 +134,6 @@ def tap_keg(id):
         db.session.add(tap)
         db.session.commit()
         return redirect(url_for('manage_taps', id=tap.location.id))
-
     return "didn't validate"
 
 
@@ -144,6 +147,7 @@ def new_tap(loc_id):
         db.session.add(new_tap)
         db.session.commit()
         return redirect(url_for('manage_taps', id=new_tap.location.id))
+
 
 @app.route('/location/<loc_id>/tap/<tap_id>/delete', methods=['GET'])
 @login_required
