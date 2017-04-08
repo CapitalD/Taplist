@@ -1,7 +1,26 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<h2>Manage taps</h2>
+<div class="page-header">
+  <div class="btn-toolbar pull-right">
+    <div class="btn-group" role="group" aria-label="tap actions">
+      <button type="button" class="btn btn-default"  data-toggle="modal" data-target="#new-tap-modal" name="new_tap">Add tap...</button>
+
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Remove tap
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          {% for t in taps|sort(attribute='id') %}
+            <li><a href="{{ url_for('delete_tap', loc_id = t.location.id, tap_id=t.id) }}">{{ t.label }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <h2>Manage taps</h2>
+</div>
 
 <div class="row">
   <div class="col-xs-10 col-xs-offset-1">
@@ -45,30 +64,58 @@
           <h4 class="modal-title">Tap a keg</h4>
         </div>
         <div class="modal-body">
-          {{ form.hidden_tag() }}
+          {{ keg_form.hidden_tag() }}
           <p>
             <label for="brewery">
               Brewery
-                {{ form.brewery(class_="form-control") }}
+                {{ keg_form.brewery(class_="form-control") }}
             </label>
           </p>
 
           <p>
             <label for="beer">
               Beer
-                {{ form.beer(class_="form-control", disabled=true) }}
+                {{ keg_form.beer(class_="form-control", disabled=true) }}
             </label>
           </p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <input type="submit" class="btn btn-primary" value="Tap keg">
+          {{ keg_form.tap_keg(class_="btn btn-primary") }}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="new-tap-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <form action="" method="post" name="new_tap">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Add a tap</h4>
+        </div>
+        <div class="modal-body">
+          {{ new_tap_form.hidden_tag() }}
+          <p>
+            <label for="label">
+              Label
+                {{ new_tap_form.label(class_="form-control") }}
+            </label>
+          </p>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          {{ new_tap_form.add_tap(class_="btn btn-primary") }}
         </div>
       </div>
     </form>
   </div>
 </div>
 {% endblock %}
+
 {% block endbody %}
 <script type="text/javascript">
 {% for tap in taps %}
@@ -82,6 +129,11 @@ $("button[name='clear_tap']").on('click', function() {
 $("button[name='tap_keg']").on('click', function() {
   $("#tap_id").val($(this).data("tap-id"));
   $("form[name='manage_taps']").attr("action", $SCRIPT_ROOT + "/tap/" + $(this).data("tap-id") + "/set");
+});
+
+$("button[name='new_tap']").on('click', function() {
+  $("#location_id").val({{ taps[0].location.id }});
+  $("form[name='new_tap']").attr("action", $SCRIPT_ROOT + "/location/" + {{ taps[0].location.id }} + "/tap/new");
 });
 
 $("select#brewery").on('change', function() {

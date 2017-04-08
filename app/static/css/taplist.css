@@ -44,3 +44,7 @@
   border-left: 1px dotted #000;
   height: 130px;
 }
+
+.page-header {
+  margin-top: 20px;
+}

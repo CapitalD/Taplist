@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, abort, jsonify, request
 from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person, Brewery, Beer
-from forms import NewLocationForm, LoginForm, EditProfile, TapKeg
+from forms import NewLocationForm, LoginForm, EditProfile, TapKeg, NewTap
 
 @app.route('/')
 def index():
@@ -96,14 +96,16 @@ def edit_profile(id):
 @app.route('/location/<id>/taps', methods=['GET'])
 @login_required
 def manage_taps(id):
-    form = TapKeg()
-    form.brewery.query = Brewery.query.order_by('name')
-    form.beer.query = Beer.query.order_by('name')
+    keg_form = TapKeg()
+    new_tap_form = NewTap()
+    keg_form.brewery.query = Brewery.query.order_by('name')
+    keg_form.beer.query = Beer.query.order_by('name')
     taps = Location.query.get_or_404(id).taps
     return render_template('manage_taps.html',
                             title='Manage taps',
                             taps=taps,
-                            form=form)
+                            keg_form=keg_form,
+                            new_tap_form=new_tap_form)
 
 
 @app.route('/tap/<id>/clear', methods=['GET'])
@@ -120,15 +122,38 @@ def clear_tap(id):
 @login_required
 def tap_keg(id):
     tap = Tap.query.get_or_404(id)
-    form = TapKeg(request.form)
-    form.brewery.query = Brewery.query.order_by('name')
-    form.beer.query = Beer.query.order_by('name')
-    if form.validate_on_submit():
-        tap.beer = form.beer.data
+    keg_form = TapKeg(request.form)
+    keg_form.brewery.query = Brewery.query.order_by('name')
+    keg_form.beer.query = Beer.query.order_by('name')
+    if keg_form.tap_keg.data and keg_form.validate_on_submit():
+        tap.beer = keg_form.beer.data
         db.session.add(tap)
         db.session.commit()
         return redirect(url_for('manage_taps', id=tap.location.id))
+
     return "didn't validate"
+
+
+@app.route('/location/<loc_id>/tap/new', methods=['POST'])
+@login_required
+def new_tap(loc_id):
+    location = Location.query.get_or_404(loc_id)
+    new_tap_form = NewTap(request.form)
+    if new_tap_form.add_tap.data and new_tap_form.validate_on_submit():
+        new_tap = Tap(label=new_tap_form.label.data, location=location)
+        db.session.add(new_tap)
+        db.session.commit()
+        return redirect(url_for('manage_taps', id=new_tap.location.id))
+
+@app.route('/location/<loc_id>/tap/<tap_id>/delete', methods=['GET'])
+@login_required
+def delete_tap(loc_id, tap_id):
+    location = Location.query.get_or_404(loc_id)
+    tap = Tap.query.get_or_404(tap_id)
+    if tap in location.taps:
+        db.session.delete(tap)
+        db.session.commit()
+        return redirect(url_for('manage_taps', id=location.id))
 
 ## AJAX ##
 

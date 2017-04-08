@@ -23,3 +23,9 @@ class TapKeg(FlaskForm):
     tap_id = HiddenField('tap_id', validators=[DataRequired()])
     brewery = QuerySelectField(get_label='name', allow_blank=True, blank_text='Choose a brewery')
     beer = QuerySelectField(get_label='name', allow_blank=True, blank_text='Choose a brewery before choosing a beer')
+    tap_keg = SubmitField('Tap keg')
+
+class NewTap(FlaskForm):
+    location_id = HiddenField('location_id', validators=[DataRequired()])
+    label = StringField('label', validators=[DataRequired()])
+    add_tap = SubmitField('Add tap')
