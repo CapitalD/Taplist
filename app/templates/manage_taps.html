@@ -19,7 +19,7 @@
       </div>
     </div>
   </div>
-  <h2>Manage taps</h2>
+  <h2>Manage taps at {{ location.name }}</h2>
 </div>
 
 <div class="row">
@@ -132,8 +132,8 @@ $("button[name='tap_keg']").on('click', function() {
 });
 
 $("button[name='new_tap']").on('click', function() {
-  $("#location_id").val({{ taps[0].location.id }});
-  $("form[name='new_tap']").attr("action", $SCRIPT_ROOT + "/location/" + {{ taps[0].location.id }} + "/tap/new");
+  $("#location_id").val({{ location.id }});
+  $("form[name='new_tap']").attr("action", $SCRIPT_ROOT + "/location/" + {{ location.id }} + "/tap/new");
 });
 
 $("select#brewery").on('change', function() {

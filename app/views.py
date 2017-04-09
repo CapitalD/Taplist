@@ -104,10 +104,11 @@ def manage_taps(id):
     new_tap_form = NewTap()
     keg_form.brewery.query = Brewery.query.order_by('name')
     keg_form.beer.query = Beer.query.order_by('name')
-    taps = Location.query.get_or_404(id).taps
+    location = Location.query.get_or_404(id)
     return render_template('manage_taps.html',
                             title='Manage taps',
-                            taps=taps,
+                            location=location,
+                            taps=location.taps,
                             keg_form=keg_form,
                             new_tap_form=new_tap_form)
 
@@ -174,7 +175,7 @@ def new_brewery():
     return render_template('new_brewery.html',
                             title='Add brewery',
                             form=form)
-                            
+
 ## AJAX ##
 
 @app.route('/brewery/<id>/beers', methods=['GET'])
