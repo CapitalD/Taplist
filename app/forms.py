@@ -29,3 +29,8 @@ class NewTap(FlaskForm):
     location_id = HiddenField('location_id', validators=[DataRequired()])
     label = StringField('label', validators=[DataRequired()])
     add_tap = SubmitField('Add tap')
+
+class NewBrewery(FlaskForm):
+    name = StringField('name', validators=[DataRequired()])
+    address = StringField('address', validators=[DataRequired()])
+    submit = SubmitField('Add brewery')

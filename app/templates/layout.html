@@ -47,6 +47,7 @@
                 <ul class="dropdown-menu">
                   {% if current_user.is_admin %}
                   <li><a href="{{ url_for('add_location') }}">Add a location</a></li>
+                  <li><a href="{{ url_for('new_brewery') }}">Add a brewery</a></li>
                   <li><a href="#"><i>Add a person</i></a></li>
                   <li role="separator" class="divider"></li>
                   {% endif %}

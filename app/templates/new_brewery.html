@@ -1,0 +1,32 @@
+
+{% extends "layout.html" %}
+
+{% block body %}
+
+  <h1>Add brewery</h1>
+  <form action="" method="post" name="new_brewery">
+    {{ form.hidden_tag() }}
+    <p>
+      <label for="name">
+        Brewery name
+          {{ form.name(size=80, class_="form-control") }}
+          {% for error in form.name.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+      </label>
+    </p>
+    <p>
+      <label for="address">
+        Brewery address
+          {{ form.address(size=80, class_="form-control") }}
+          {% for error in form.address.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+      </label>
+    </p>
+    <p>
+      <a href="{{ url_for('index') }}">Cancel</a> |
+      {{ form.submit(class_="btn btn-primary") }}
+    </p>
+  </form>
+{% endblock %}

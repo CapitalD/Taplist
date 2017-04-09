@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, abort, jsonify, request
 from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person, Brewery, Beer
-from forms import NewLocationForm, LoginForm, EditProfile, TapKeg, NewTap
+from forms import NewLocationForm, LoginForm, EditProfile, TapKeg, NewTap, NewBrewery
 
 
 @app.route('/')
@@ -159,6 +159,22 @@ def delete_tap(loc_id, tap_id):
         db.session.commit()
         return redirect(url_for('manage_taps', id=location.id))
 
+
+@app.route('/brewery/new', methods=['GET', 'POST'])
+@login_required
+def new_brewery():
+    if not current_user.is_admin:
+        return abort(401)
+    form = NewBrewery()
+    if form.validate_on_submit():
+        brewery = Brewery(name=form.name.data, address=form.address.data)
+        db.session.add(brewery)
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('new_brewery.html',
+                            title='Add brewery',
+                            form=form)
+                            
 ## AJAX ##
 
 @app.route('/brewery/<id>/beers', methods=['GET'])
