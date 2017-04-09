@@ -6,10 +6,12 @@ from wtforms.validators import DataRequired, NumberRange, Optional, Email, Equal
 class NewLocationForm(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
     address = StringField('address', validators=[DataRequired()])
+    submit = SubmitField('Add location')
 
 class LoginForm(FlaskForm):
     email = StringField('email', validators=[DataRequired(), Email()])
     password = PasswordField('password', validators=[DataRequired()])
+    submit = SubmitField('Log in')
 
 class EditProfile(FlaskForm):
     email = StringField('email', validators=[Email()])
@@ -18,6 +20,7 @@ class EditProfile(FlaskForm):
     is_admin = BooleanField('is_admin')
     is_manager = BooleanField('is_manager')
     is_brewer = BooleanField('is_brewer')
+    submit = SubmitField('Save changes')
 
 class TapKeg(FlaskForm):
     tap_id = HiddenField('tap_id', validators=[DataRequired()])

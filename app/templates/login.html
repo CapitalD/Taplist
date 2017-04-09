@@ -25,7 +25,7 @@
     </p>
     <p>
       <a href="{{ url_for('index') }}">Cancel</a> |
-      <input type="submit" name="submit" value="Login" class="btn btn-default">
+      {{ form.submit(class_="btn btn-primary") }}
     </p>
   </form>
 {% endblock %}
