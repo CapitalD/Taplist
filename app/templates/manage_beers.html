@@ -3,22 +3,41 @@
 
 <div class="page-header">
   <div class="btn-toolbar pull-right">
-    <div class="btn-group" role="group" aria-label="beer actions">
-      <button type="button" class="btn btn-default"  data-toggle="modal" data-target="#new-beer-modal" name="new_beer">Add beer...</button>
-      <div class="btn-group" role="group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Remove beer
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          {% for b in brewery.beers|sort(attribute='name') %}
-            <li><a href="{{ url_for('delete_beer', id=b.id) }}">{{ b.name }}</a></li>
-          {% endfor %}
-        </ul>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Switch brewery
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        {% for ml in manageable_locations|sort(attribute='name') %}
+          <li><a href="{{ url_for('manage_beers', id=ml.id) }}">{{ ml.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <h1>Manage beers for {{ brewery.name }}</h1>
+</div>
+
+<div class="row">
+  <div class="col-xs-10 col-xs-offset-1">
+    <div class="btn-toolbar pull-right">
+      <div class="btn-group" role="group" aria-label="beer actions">
+        <button type="button" class="btn btn-default"  data-toggle="modal" data-target="#new-beer-modal" name="new_beer">Add beer...</button>
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Remove beer
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            {% for b in brewery.beers|sort(attribute='name') %}
+              <li><a href="{{ url_for('delete_beer', id=b.id) }}">{{ b.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
     </div>
   </div>
-  <h1>Manage beers for {{ brewery.name }}</h1>
 </div>
 
 <div class="row">

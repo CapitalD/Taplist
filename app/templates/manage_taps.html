@@ -3,23 +3,42 @@
 
 <div class="page-header">
   <div class="btn-toolbar pull-right">
-    <div class="btn-group" role="group" aria-label="tap actions">
-      <button type="button" class="btn btn-default"  data-toggle="modal" data-target="#new-tap-modal" name="new_tap">Add tap...</button>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Switch location
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        {% for ml in manageable_locations|sort(attribute='name') %}
+          <li><a href="{{ url_for('manage_taps', id=ml.id) }}">{{ ml.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 
-      <div class="btn-group" role="group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Remove tap
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          {% for t in taps|sort(attribute='id') %}
-            <li><a href="{{ url_for('delete_tap', loc_id = t.location.id, tap_id=t.id) }}">{{ t.label }}</a></li>
-          {% endfor %}
-        </ul>
+  <h1>Manage taps at {{ location.name }}</h1>
+</div>
+
+<div class="row">
+  <div class="col-xs-10 col-xs-offset-1">
+    <div class="btn-toolbar pull-right">
+      <div class="btn-group" role="group" aria-label="tap actions">
+        <button type="button" class="btn btn-default"  data-toggle="modal" data-target="#new-tap-modal" name="new_tap">Add tap...</button>
+
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Remove tap
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            {% for t in taps|sort(attribute='id') %}
+              <li><a href="{{ url_for('delete_tap', loc_id = t.location.id, tap_id=t.id) }}">{{ t.label }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
     </div>
   </div>
-  <h1>Manage taps at {{ location.name }}</h1>
 </div>
 
 <div class="row">

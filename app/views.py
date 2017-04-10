@@ -77,7 +77,8 @@ def add_location():
         flash("Location could not be created. Please correct errors and try again.", "error")
     return render_template('new_location.html',
                             title='Add location',
-                            form=form)
+                            form=form,
+                            admin_template=True)
 
 
 @app.route('/person/<id>', methods=['GET', 'POST'])
@@ -104,23 +105,32 @@ def edit_profile(id):
     return render_template('edit_profile.html',
                             title='Edit profile',
                             person=person,
-                            form=form)
+                            form=form,
+                            admin_template=True)
 
 
 @app.route('/location/<id>/taps/edit', methods=['GET'])
 @login_required
 def manage_taps(id):
+    if not current_user.is_admin and not current_user.is_manager:
+        return abort(401)
     keg_form = TapKeg()
     new_tap_form = NewTap()
     keg_form.brewery.query = Brewery.query.order_by('name')
     keg_form.beer.query = Beer.query.order_by('name')
     location = Location.query.get_or_404(id)
+    if current_user.is_admin:
+        manageable_locations = Location.query.all()
+    if current_user.is_manager:
+        manageable_locations = Location.query.filter_by(manager_id=current_user.id)
     return render_template('manage_taps.html',
                             title='Manage taps',
                             location=location,
                             taps=location.taps,
                             keg_form=keg_form,
-                            new_tap_form=new_tap_form)
+                            new_tap_form=new_tap_form,
+                            manageable_locations=manageable_locations,
+                            admin_template=True)
 
 
 @app.route('/tap/<id>/clear', methods=['GET'])
@@ -193,7 +203,8 @@ def new_brewery():
         flash("The brewery couldn't be added. Please try again.", "error")
     return render_template('new_brewery.html',
                             title='Add brewery',
-                            form=form)
+                            form=form,
+                            admin_template=True)
 
 
 @app.route('/brewery/<id>/beers/edit', methods=['GET'])
@@ -203,11 +214,18 @@ def manage_beers(id):
         return abort(401)
     form = NewBeer()
     brewery = Brewery.query.get_or_404(id)
+    if current_user.is_admin:
+        manageable_locations = Brewery.query.all()
+    if current_user.is_brewer:
+        manageable_locations = Brewery.query.filter_by(brewer_id=current_user.id)
     return render_template('manage_beers.html',
                             title="Manage beers",
                             brewery=brewery,
                             new_beer=form,
-                            edit_beer=form)
+                            edit_beer=form,
+                            manageable_locations=manageable_locations,
+                            admin_template=True)
+
 
 @app.route('/brewery/<brewery_id>/beer/new', methods=['POST'])
 @login_required
@@ -230,7 +248,8 @@ def new_beer(brewery_id):
                             title="Manage beers",
                             brewery=brewery,
                             new_beer=new_beer,
-                            edit_beer=edit_beer)
+                            edit_beer=edit_beer,
+                            admin_template=True)
 
 
 @app.route('/beer/<id>/edit', methods=['POST'])
@@ -253,7 +272,8 @@ def edit_beer(id):
                             title="Manage beers",
                             brewery=beer.brewery,
                             new_beer=new_beer,
-                            edit_beer=edit_beer)
+                            edit_beer=edit_beer,
+                            admin_template=True)
 
 
 @app.route('/beer/<id>/delete', methods=['GET'])
