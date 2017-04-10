@@ -1,9 +1,11 @@
 
 {% extends "layout.html" %}
-
 {% block body %}
 
-  <h1>Add brewery</h1>
+  <div class="page-header">
+    <h1>Add brewery</h1>
+  </div>
+
   <form action="" method="post" name="new_brewery">
     {{ form.hidden_tag() }}
     <p>
@@ -25,7 +27,7 @@
       </label>
     </p>
     <p>
-      <a href="{{ url_for('index') }}">Cancel</a> |
+      <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a> 
       {{ form.submit(class_="btn btn-primary") }}
     </p>
   </form>
