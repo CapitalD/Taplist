@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, abort, jsonify, request
 from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person, Brewery, Beer
-from forms import NewLocationForm, LoginForm, EditProfile, TapKeg, NewTap, NewBrewery
+from forms import NewLocationForm, LoginForm, EditProfile, TapKeg, NewTap, NewBrewery, NewBeer
 
 
 @app.route('/')
@@ -97,7 +97,7 @@ def edit_profile(id):
                             form=form)
 
 
-@app.route('/location/<id>/taps', methods=['GET'])
+@app.route('/location/<id>/taps/edit', methods=['GET'])
 @login_required
 def manage_taps(id):
     keg_form = TapKeg()
@@ -176,11 +176,74 @@ def new_brewery():
                             title='Add brewery',
                             form=form)
 
+
+@app.route('/brewery/<id>/beers/edit', methods=['GET'])
+@login_required
+def manage_beers(id):
+    if not current_user.is_admin and not current_user.is_brewer:
+        return abort(401)
+    form = NewBeer()
+    brewery = Brewery.query.get_or_404(id)
+    return render_template('manage_beers.html',
+                            title="Manage beers",
+                            brewery=brewery,
+                            new_beer=form,
+                            edit_beer=form)
+
+@app.route('/brewery/<brewery_id>/beer/new', methods=['POST'])
+@login_required
+def new_beer(brewery_id):
+    brewery = Brewery.query.get_or_404(brewery_id)
+    new_beer = NewBeer(request.form)
+    if new_beer.validate_on_submit():
+        beer = Beer(name=new_beer.name.data,
+                        style=new_beer.style.data,
+                        abv=new_beer.abv.data,
+                        colour=new_beer.colour.data,
+                        brewery=brewery)
+        db.session.add(beer)
+        db.session.commit()
+        return redirect(url_for('manage_beers', id=brewery.id))
+    edit_beer = NewBeer()
+    return render_template('manage_beers.html',
+                            title="Manage beers",
+                            brewery=brewery,
+                            new_beer=new_beer,
+                            edit_beer=edit_beer)
+
+@app.route('/beer/<id>/edit', methods=['POST'])
+@login_required
+def edit_beer(id):
+    beer = Beer.query.get_or_404(id)
+    edit_beer = NewBeer(request.form)
+    if edit_beer.validate_on_submit():
+        beer.name = edit_beer.name.data
+        beer.style = edit_beer.style.data
+        beer.abv = edit_beer.abv.data
+        beer.colour =  edit_beer.colour.data
+        db.session.add(beer)
+        db.session.commit()
+        return redirect(url_for('manage_beers', id=beer.brewery.id))
+    new_beer = NewBeer()
+    return render_template('manage_beers.html',
+                            title="Manage beers",
+                            brewery=beer.brewery,
+                            new_beer=new_beer,
+                            edit_beer=edit_beer)
+
+
 ## AJAX ##
 
-@app.route('/brewery/<id>/beers', methods=['GET'])
+@app.route('/brewery/<id>/beers.json', methods=['GET'])
 @login_required
 def get_beers_by_brewery(id):
     brewery = Brewery.query.get_or_404(id)
     beers = [(b.id, b.name) for b in brewery.beers]
     return jsonify(beers)
+
+@app.route('/beer/<id>/detail.json', methods=['GET'])
+@login_required
+def get_beer_details(id):
+    beer = Beer.query.get_or_404(id)
+    b = [(beer.id, beer.name, beer.style, beer.abv, beer.colour)]
+    return jsonify(b)

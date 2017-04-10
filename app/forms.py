@@ -37,3 +37,10 @@ class NewBrewery(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
     address = StringField('address', validators=[DataRequired()])
     submit = SubmitField('Add brewery')
+
+class NewBeer(FlaskForm):
+    name = StringField('name', validators=[DataRequired()])
+    style = StringField('style', validators=[DataRequired()])
+    abv = DecimalField('abv', validators=[DataRequired()])
+    colour = DecimalField('colour', validators=[Optional()])
+    submit = SubmitField('Add beer')

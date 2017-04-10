@@ -147,7 +147,7 @@ $("select#brewery").on('change', function() {
     return false;
   }
 
-  $.getJSON($SCRIPT_ROOT + '/brewery/' + $("select[name='brewery']").val() + '/beers',
+  $.getJSON($SCRIPT_ROOT + '/brewery/' + $("select[name='brewery']").val() + '/beers.json',
     {},
     function(data) {
       $("#beer").empty();
