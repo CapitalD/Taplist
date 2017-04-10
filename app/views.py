@@ -238,7 +238,7 @@ def edit_beer(id):
 @login_required
 def get_beers_by_brewery(id):
     brewery = Brewery.query.get_or_404(id)
-    beers = [(b.id, b.name) for b in brewery.beers]
+    beers = [(b.id, b.name) for b in brewery.beers.order_by('name')]
     return jsonify(beers)
 
 @app.route('/beer/<id>/detail.json', methods=['GET'])
