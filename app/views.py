@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, abort, jsonify, request
+from flask import render_template, redirect, url_for, abort, jsonify, request, flash
 from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person, Brewery, Beer
@@ -33,8 +33,11 @@ def login():
                 user.authenticated = True
                 db.session.add(user)
                 db.session.commit()
-                login_user(user) #, remember=True)
+                login_user(user)
+                flash("Log in successful", "success")
                 return redirect(url_for("index"))
+    if form.errors:
+        flash("Incorrect details.  Please try again.", "error")
     return render_template('login.html',
                             title='Log in',
                             form=form)
@@ -54,6 +57,7 @@ def logout():
     db.session.add(user)
     db.session.commit()
     logout_user()
+    flash("Log out successful", "success")
     return redirect(url_for("index"))
 
 
@@ -67,7 +71,10 @@ def add_location():
         location = Location(name=form.name.data, address=form.address.data)
         db.session.add(location)
         db.session.commit()
+        flash("Location created successfully", "success")
         return redirect(url_for('view_location', id=location.id))
+    if form.errors:
+        flash("Location could not be created. Please correct errors and try again.", "error")
     return render_template('new_location.html',
                             title='Add location',
                             form=form)
@@ -88,9 +95,12 @@ def edit_profile(id):
             person.is_brewer = form.is_brewer.data
         db.session.add(person)
         db.session.commit()
+        flash("Profile edited successfully", "success")
         return redirect(url_for("index"))
     person = Person.query.get_or_404(id)
     form.email.data = person.email
+    if form.errors:
+        flash("Changes to profile could not be saved.  Please correct errors and try again.", "error")
     return render_template('edit_profile.html',
                             title='Edit profile',
                             person=person,
@@ -135,7 +145,8 @@ def tap_keg(id):
         db.session.add(tap)
         db.session.commit()
         return redirect(url_for('manage_taps', id=tap.location.id))
-    return "didn't validate"
+    flash("That keg couldn't be tapped for some reason.", "error")
+    return redirect(url_for('manage_taps', id=tap.location.id))
 
 
 @app.route('/location/<loc_id>/tap/new', methods=['POST'])
@@ -147,7 +158,9 @@ def new_tap(loc_id):
         new_tap = Tap(label=new_tap_form.label.data, location=location)
         db.session.add(new_tap)
         db.session.commit()
+        flash("Tap added successfully", "success")
         return redirect(url_for('manage_taps', id=new_tap.location.id))
+    flash("A new tap couldn't be added. Please try again.", "error")
 
 
 @app.route('/location/<loc_id>/tap/<tap_id>/delete', methods=['GET'])
@@ -158,7 +171,10 @@ def delete_tap(loc_id, tap_id):
     if tap in location.taps:
         db.session.delete(tap)
         db.session.commit()
+        flash("Tap removed successfully.", "success")
         return redirect(url_for('manage_taps', id=location.id))
+    flash("That tap couldn't be removed for some reason.", "error")
+    return redirect(url_for('manage_taps', id=location.id))
 
 
 @app.route('/brewery/new', methods=['GET', 'POST'])
@@ -171,7 +187,10 @@ def new_brewery():
         brewery = Brewery(name=form.name.data, address=form.address.data)
         db.session.add(brewery)
         db.session.commit()
+        flash("Brewery created successfully", "success")
         return redirect(url_for('index'))
+    if form.errors:
+        flash("The brewery couldn't be added. Please try again.", "error")
     return render_template('new_brewery.html',
                             title='Add brewery',
                             form=form)
@@ -203,13 +222,16 @@ def new_beer(brewery_id):
                         brewery=brewery)
         db.session.add(beer)
         db.session.commit()
+        flash("Beer created successfully", "success")
         return redirect(url_for('manage_beers', id=brewery.id))
     edit_beer = NewBeer()
+    flash("The new beer couldn't be created. Please try again.", "error")
     return render_template('manage_beers.html',
                             title="Manage beers",
                             brewery=brewery,
                             new_beer=new_beer,
                             edit_beer=edit_beer)
+
 
 @app.route('/beer/<id>/edit', methods=['POST'])
 @login_required
@@ -223,8 +245,10 @@ def edit_beer(id):
         beer.colour =  edit_beer.colour.data
         db.session.add(beer)
         db.session.commit()
+        flash("Beer updated successfully", "success")
         return redirect(url_for('manage_beers', id=beer.brewery.id))
     new_beer = NewBeer()
+    flash("Changes to the beer could not be saved. Please try again.", "error")
     return render_template('manage_beers.html',
                             title="Manage beers",
                             brewery=beer.brewery,
