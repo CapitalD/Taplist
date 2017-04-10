@@ -256,6 +256,16 @@ def edit_beer(id):
                             edit_beer=edit_beer)
 
 
+@app.route('/beer/<id>/delete', methods=['GET'])
+@login_required
+def delete_beer(id):
+    beer = Beer.query.get_or_404(id)
+    brewery_id = beer.brewery.id
+    db.session.delete(beer)
+    db.session.commit()
+    flash("Beer removed successfully.", "success")
+    return redirect(url_for('manage_beers', id=brewery_id))
+
 ## AJAX ##
 
 @app.route('/brewery/<id>/beers.json', methods=['GET'])
