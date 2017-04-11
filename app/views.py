@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, abort, jsonify, request, f
 from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person, Brewery, Beer
-from forms import NewLocationForm, LoginForm, EditProfile, TapKeg, NewTap, NewBrewery, NewBeer
+from forms import NewLocationForm, LoginForm, ProfileForm, TapKeg, NewTap, NewBrewery, NewBeer
 
 
 @app.route('/')
@@ -84,7 +84,7 @@ def add_location():
 @app.route('/person/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_profile(id):
-    form = EditProfile()
+    form = ProfileForm()
     if form.validate_on_submit():
         person = Person.query.get_or_404(id)
         person.email = form.email.data
@@ -109,20 +109,24 @@ def edit_profile(id):
                             admin_template=True)
 
 
+@app.route('/location/taps/edit', methods=['GET'])
 @app.route('/location/<id>/taps/edit', methods=['GET'])
 @login_required
-def manage_taps(id):
+def manage_taps(id=None):
     if not current_user.is_admin and not current_user.is_manager:
         return abort(401)
     keg_form = TapKeg()
     new_tap_form = NewTap()
     keg_form.brewery.query = Brewery.query.order_by('name')
     keg_form.beer.query = Beer.query.order_by('name')
-    location = Location.query.get_or_404(id)
     if current_user.is_admin:
         manageable_locations = Location.query.all()
-    if current_user.is_manager:
-        manageable_locations = Location.query.filter_by(manager_id=current_user.id)
+    elif current_user.is_manager:
+        manageable_locations = Location.query.filter_by(manager_id=current_user.id).all()
+    if id:
+        location = Location.query.get_or_404(id)
+    else:
+        location = manageable_locations[0]
     return render_template('manage_taps.html',
                             title='Manage taps',
                             location=location,
@@ -206,18 +210,21 @@ def new_brewery():
                             form=form,
                             admin_template=True)
 
-
+@app.route('/brewery/beers/edit', methods=['GET'])
 @app.route('/brewery/<id>/beers/edit', methods=['GET'])
 @login_required
-def manage_beers(id):
+def manage_beers(id=None):
     if not current_user.is_admin and not current_user.is_brewer:
         return abort(401)
     form = NewBeer()
-    brewery = Brewery.query.get_or_404(id)
     if current_user.is_admin:
         manageable_locations = Brewery.query.all()
-    if current_user.is_brewer:
-        manageable_locations = Brewery.query.filter_by(brewer_id=current_user.id)
+    elif current_user.is_brewer:
+        manageable_locations = Brewery.query.filter_by(brewer_id=current_user.id).all()
+    if id:
+        brewery = Brewery.query.get_or_404(id)
+    else:
+        brewery = manageable_locations[0]
     return render_template('manage_beers.html',
                             title="Manage beers",
                             brewery=brewery,
@@ -285,6 +292,41 @@ def delete_beer(id):
     db.session.commit()
     flash("Beer removed successfully.", "success")
     return redirect(url_for('manage_beers', id=brewery_id))
+
+
+@app.route('/person/new', methods=['GET', 'POST'])
+@login_required
+def new_person():
+    if not current_user.is_admin:
+        return abort(401)
+    form = ProfileForm()
+    form.location.query = Location.query.order_by('name')
+    form.brewery.query = Brewery.query.order_by('name')
+    if form.validate_on_submit():
+        person = Person(email=form.email.data,
+                        password = bcrypt.generate_password_hash(form.password.data),
+                        is_admin = form.is_admin.data,
+                        is_manager = form.is_manager.data,
+                        is_brewer = form.is_brewer.data)
+        db.session.add(person)
+        db.session.commit()
+        if person.is_manager:
+            location = Location.query.get(form.location.data.id)
+            location.manager = person
+            db.session.add(location)
+        if person.is_brewer:
+            brewery = Brewery.query.get(form.brewery.data.id)
+            brewery.brewer = person
+            db.session.add(brewery)
+        db.session.commit()
+        flash("Person added successfully", "success")
+        return redirect(url_for("index"))
+    if form.errors:
+        flash("Changes to profile could not be saved.  Please correct errors and try again.", "error")
+    return render_template('new_person.html',
+                    title='Add a person',
+                    form=form,
+                    admin_template=True)
 
 ## AJAX ##
 

@@ -54,14 +54,12 @@
 <script type="text/javascript">
 {% for tap in location.taps %}
   var beer_colour = get_hex_from_ebc({{tap.beer.colour}});
-  console.log(beer_colour);
   $("#label_tap{{tap.id}}").css({
     "background": "-moz-linear-gradient(top, #ffffff 0%, " + beer_colour + " 100%)",
     "background": "-webkit-linear-gradient(top, #ffffff 0%, " + beer_colour + " 100%)",
     "background": "linear-gradient(to bottom, #ffffff 0%, " + beer_colour + " 100%)",
     "filter": "progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='" + beer_colour + "',GradientType=0)"
   });
-//  $("#label_tap{{tap.id}}").css("background-color",get_hex_from_ebc({{tap.beer.colour}}));
 {% endfor %}
 </script>
 {% endblock %}

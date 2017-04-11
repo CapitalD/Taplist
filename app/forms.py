@@ -13,14 +13,29 @@ class LoginForm(FlaskForm):
     password = PasswordField('password', validators=[DataRequired()])
     submit = SubmitField('Log in')
 
-class EditProfile(FlaskForm):
+class ProfileForm(FlaskForm):
     email = StringField('email', validators=[Email()])
     password = PasswordField('password', validators=[EqualTo('confirm_password', message='Passwords must match')])
     confirm_password = PasswordField('confirm_password')
     is_admin = BooleanField('is_admin')
     is_manager = BooleanField('is_manager')
+    location = QuerySelectField(get_label='name', allow_blank=True, blank_text='Choose a location to manage')
     is_brewer = BooleanField('is_brewer')
+    brewery = QuerySelectField(get_label='name', allow_blank=True, blank_text='Choose a brewery to manage')
     submit = SubmitField('Save changes')
+
+    def validate(self):
+        if not super(ProfileForm, self).validate():
+            return False
+        if self.is_manager.data and not self.location.data:
+            msg = 'A location must be selected if the person is a bar manager'
+            self.location.errors.append(msg)
+            return False
+        if self.is_brewer.data and not self.brewery.data:
+            msg = 'A brewery must be selected if the person is a brewer'
+            self.brewery.errors.append(msg)
+            return False
+        return True
 
 class TapKeg(FlaskForm):
     tap_id = HiddenField('tap_id', validators=[DataRequired()])

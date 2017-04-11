@@ -51,18 +51,18 @@
                   <li class="dropdown-header">Admin</li>
                   <li><a href="{{ url_for('add_location') }}">Add a location</a></li>
                   <li><a href="{{ url_for('new_brewery') }}">Add a brewery</a></li>
-                  <li><a href="#"><i>Add a person</i></a></li>
+                  <li><a href="{{ url_for('new_person') }}">Add a person</a></li>
                   <li role="separator" class="divider"></li>
                   {% endif %}
                   {% if current_user.is_admin or current_user.is_manager %}
                   <li class="dropdown-header">Location manager</li>
-                  <li><a href="{{ url_for('manage_taps', id=1) }}">Manage taps</a></li>
+                  <li><a href="{{ url_for('manage_taps') }}">Manage taps</a></li>
                   <li><a href="#"><i>Manage location</i></a></li>
                   <li role="separator" class="divider"></li>
                   {% endif %}
                   {% if current_user.is_admin or current_user.is_brewer %}
                   <li class="dropdown-header">Brewer</li>
-                  <li><a href="{{ url_for('manage_beers', id=1) }}">Manage beers</a></li>
+                  <li><a href="{{ url_for('manage_beers') }}">Manage beers</a></li>
                   <li><a href="#"><i>Manage brewery</i></a></li>
                   <li role="separator" class="divider"></li>
                   {% endif %}

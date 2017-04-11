@@ -1,0 +1,126 @@
+
+{% extends "layout.html" %}
+{% block body %}
+
+  <div class="page-header">
+    <h1>Edit your profile</h1>
+  </div>
+
+  <form action="" method="post" name="login">
+    {{ form.hidden_tag() }}
+    <h3>Profile details</h3>
+    <p>
+      <label for="email">
+        Email
+          {{ form.email(size=80, class_="form-control") }}
+          {% for error in form.email.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+      </label>
+    </p>
+
+    <h3>Set a password</h3>
+    <fieldset style="padding-left: 1.5em">
+      <p>
+        <label for="password">
+          Password
+            {{ form.password(size=80, class_="form-control") }}
+            {% for error in form.password.errors %}
+              <span style="color: #f33;">[{{ error }}]</span>
+            {% endfor %}
+        </label>
+      </p>
+      <p>
+        <label for="confirm_password">
+          Confirm password
+            {{ form.confirm_password(size=80, class_="form-control") }}
+            {% for error in form.confirm_password.errors %}
+              <span style="color: #f33;">[{{ error }}]</span>
+            {% endfor %}
+        </label>
+      </p>
+    </fieldset>
+
+    <h3>Roles</h3>
+    <p>
+      <label for="is_admin">
+        {{ form.is_admin(checked=form.is_admin.data) }}
+        Admin?
+        {% for error in form.is_admin.errors %}
+          <span style="color: #f33;">[{{ error }}]</span>
+        {% endfor %}
+      </label>
+    </p>
+
+    <p>
+      <label for="is_manager">
+        {{ form.is_manager(checked=form.is_manager.data) }}
+        Bar manager?
+        {% for error in form.is_manager.errors %}
+          <span style="color: #f33;">[{{ error }}]</span>
+        {% endfor %}
+      </label>
+    </p>
+
+    <div id="location_selection" class="hidden" style="margin-left: 2em;">
+      <p>
+        <label for="location">
+          {{ form.location(class_="form-control") }}
+          {% for error in form.location.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+        </label>
+      </p>
+    </div>
+
+    <p>
+      <label for="is_brewer">
+        {{ form.is_brewer(checked=form.is_brewer.data) }}
+        Brewer?
+        {% for error in form.is_brewer.errors %}
+          <span style="color: #f33;">[{{ error }}]</span>
+        {% endfor %}
+      </label>
+    </p>
+
+    <div id="brewery_selection" class="hidden" style="margin-left: 2em;">
+      <p>
+        <label for="brewery">
+          {{ form.brewery(class_="form-control") }}
+          {% for error in form.brewery.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+        </label>
+      </p>
+    </div>
+
+    <p>
+      <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a>
+      {{ form.submit(class_="btn btn-primary") }}
+    </p>
+  </form>
+{% endblock %}
+{% block endbody %}
+<script type="text/javascript">
+  function show_if_checked(field, container) {
+      if ($(field).prop("checked")) {
+        $(container).removeClass("hidden");
+      } else {
+        $(container).addClass("hidden");
+      }
+  }
+
+  $("input#is_brewer").on("click", function() {
+    show_if_checked(this, "#brewery_selection");
+  });
+
+  $("input#is_manager").on("click", function() {
+    show_if_checked(this, "#location_selection");
+  });
+
+  $(function() {
+    show_if_checked("input#is_brewer","#brewery_selection");
+    show_if_checked("input#is_manager","#location_selection");
+  });
+</script>
+{% endblock %}
