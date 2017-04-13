@@ -22,7 +22,7 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-10 col-xs-offset-1">
+  <div class="col-lg-10 col-lg-offset-1 col-xs-12">
     <div class="btn-toolbar pull-right">
       <div class="btn-group" role="group" aria-label="beer actions">
         <button type="button" class="btn btn-default"  data-toggle="modal" data-target="#new-beer-modal" name="new_beer">Add beer...</button>
@@ -43,7 +43,7 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-10 col-xs-offset-1">
+  <div class="col-lg-10 col-lg-offset-1 col-xs-12">
 
     <div class="row">
       <div class="col-xs-12">
@@ -52,7 +52,7 @@
             <th>Name</th>
             <th>Style</th>
             <th>ABV</th>
-            <th colspan="2">Colour</th>
+            <th colspan="2" class="hidden-xs">Colour</th>
             <th>Pouring</th>
             <th></th>
           </thead>
@@ -62,14 +62,14 @@
               <td>{{ beer.name }}</td>
               <td>{{ beer.style }}</td>
               <td>{{ beer.abv}}%</td>
-              <td width="10px" id="colour{{ beer.id }}"></td>
-              <td>{{ beer.colour }} EBC</td>
+              <td width="8px" id="colour{{ beer.id }}" class="hidden-xs"></td>
+              <td class="hidden-xs">{{ beer.colour }} EBC</td>
               {% if beer.taps.count() %}
                 <td>Yes ({{ beer.taps.count() }})</td>
               {% else %}
                 <td>No</td>
               {% endif %}
-              <td><a href="#" name="edit_beer" data-beer-id="{{beer.id}}" class="btn btn-sm btn-default">Edit</a></td>
+              <td><a href="#" name="edit_beer" data-beer-id="{{beer.id}}" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-pencil"></span></a></td>
             </tr>
             {% endfor %}
           </tbody>
