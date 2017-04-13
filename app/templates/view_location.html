@@ -6,12 +6,12 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-10 col-xs-offset-1">
+  <div class="col-lg-10 col-lg-offset-1 col-xs-12">
 
     {% for tap in location.taps|sort(attribute='id') %}
     <div class="row tap">
-      <div class="col-xs-2">
-        <div class="label-outer">
+      <div class="col-xs-1 col-md-2">
+        <div class="label-outer hidden-xs">
           <p class="label-inner rotate-cw">{{tap.label}}</p>
         </div>
         {% if tap.beer %}
@@ -27,7 +27,7 @@
         <h4 class="absolute-bottom">{{tap.beer.brewery.name}}</h4>
       </div>
 
-      <div class="col-xs-2 beer-specs">
+      <div class="col-md-2 col-xs-3 beer-specs">
         <h3 class="text-center">{{tap.beer.abv}}%</h3>
         <div class="absolute-bottom">
           {% if tap.price_pint > 0 %}
@@ -39,7 +39,7 @@
         </div>
       </div>
       {% else %}
-      <div class="col-xs-10 beer-detail"></div>
+      <div class="col-xs-11 beer-detail"></div>
       {% endif %}
     </div>
 

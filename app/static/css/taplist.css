@@ -48,3 +48,33 @@
 .page-header {
   margin-top: 20px;
 }
+
+@media (max-width: 767px) {
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  h4 {
+    font-size: 16px;
+  }
+
+  .beer-label {
+     width: 100%;
+     min-width: 20px;
+     height: 130px;
+     border-radius: 0%;
+     background: #ffffff;
+  }
+
+  .label-outer {
+    width: auto;
+    height: 130px;
+    position: relative;;
+    display: inline-block;
+    left: 0;
+  }
+}
