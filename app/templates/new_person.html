@@ -3,12 +3,33 @@
 {% block body %}
 
   <div class="page-header">
-    <h1>Edit your profile</h1>
+    <h1>Add a new person</h1>
   </div>
 
   <form action="" method="post" name="login">
     {{ form.hidden_tag() }}
     <h3>Profile details</h3>
+
+    <p>
+      <label for="firstname">
+        First name
+          {{ form.firstname(size=80, class_="form-control") }}
+          {% for error in form.firstname.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+      </label>
+    </p>
+
+    <p>
+      <label for="lastname">
+        Last name
+          {{ form.lastname(size=80, class_="form-control") }}
+          {% for error in form.lastname.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+      </label>
+    </p>
+
     <p>
       <label for="email">
         Email
@@ -20,26 +41,24 @@
     </p>
 
     <h3>Set a password</h3>
-    <fieldset style="padding-left: 1.5em">
-      <p>
-        <label for="password">
-          Password
-            {{ form.password(size=80, class_="form-control") }}
-            {% for error in form.password.errors %}
-              <span style="color: #f33;">[{{ error }}]</span>
-            {% endfor %}
-        </label>
-      </p>
-      <p>
-        <label for="confirm_password">
-          Confirm password
-            {{ form.confirm_password(size=80, class_="form-control") }}
-            {% for error in form.confirm_password.errors %}
-              <span style="color: #f33;">[{{ error }}]</span>
-            {% endfor %}
-        </label>
-      </p>
-    </fieldset>
+    <p>
+      <label for="password">
+        Password
+          {{ form.password(size=80, class_="form-control") }}
+          {% for error in form.password.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+      </label>
+    </p>
+    <p>
+      <label for="confirm_password">
+        Confirm password
+          {{ form.confirm_password(size=80, class_="form-control") }}
+          {% for error in form.confirm_password.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+      </label>
+    </p>
 
     <h3>Roles</h3>
     <p>

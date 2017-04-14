@@ -87,6 +87,8 @@ def edit_profile(id):
     form = ProfileForm()
     if form.validate_on_submit():
         person = Person.query.get_or_404(id)
+        person.firstname = form.firstname.data
+        person.lastname = form.lastname.data
         person.email = form.email.data
         if len(form.password.data) > 0:
             person.password = bcrypt.generate_password_hash(form.password.data)
@@ -99,6 +101,8 @@ def edit_profile(id):
         flash("Profile edited successfully", "success")
         return redirect(url_for("index"))
     person = Person.query.get_or_404(id)
+    form.firstname.data = person.firstname
+    form.lastname.data = person.lastname
     form.email.data = person.email
     if form.errors:
         flash("Changes to profile could not be saved.  Please correct errors and try again.", "error")
@@ -303,7 +307,9 @@ def new_person():
     form.location.query = Location.query.order_by('name')
     form.brewery.query = Brewery.query.order_by('name')
     if form.validate_on_submit():
-        person = Person(email=form.email.data,
+        person = Person(firstname=form.firstname.data,
+                        lastname=form.lastname.data,
+                        email=form.email.data,
                         password = bcrypt.generate_password_hash(form.password.data),
                         is_admin = form.is_admin.data,
                         is_manager = form.is_manager.data,

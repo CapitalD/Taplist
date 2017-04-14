@@ -51,6 +51,8 @@ class Brewery(db.Model):
 # User is a reserved word for Postgres
 class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String)
+    lastname = db.Column(db.String)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     authenticated = db.Column(db.Boolean, default=False, nullable=False)
@@ -71,4 +73,4 @@ class Person(db.Model):
         return False
 
     def __repr__(self):
-        return '<Person %r>' % (self.email)
+        return '<Person %r>' % (self.firstname)
