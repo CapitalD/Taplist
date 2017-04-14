@@ -22,7 +22,7 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-10 col-xs-offset-1">
+  <div class="col-lg-10 col-lg-offset-1 col-xs-12">
     <div class="btn-toolbar pull-right">
       <div class="btn-group" role="group" aria-label="tap actions">
         <button type="button" class="btn btn-default"  data-toggle="modal" data-target="#new-tap-modal" name="new_tap">Add tap...</button>
@@ -44,35 +44,44 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-10 col-xs-offset-1">
+  <div class="col-lg-10 col-lg-offset-1 col-xs-12">
 
-    {% for tap in taps|sort(attribute='id') %}
-    <div class="row tap">
-      <div class="col-xs-2">
-          <p>{{tap.label}}</p>
+    <div class="row">
+      <div class="col-xs-12">
+        <table class="table table-hover" id="manage_taps">
+          <thead>
+            <tr>
+              <th>Brewery</th>
+              <th>Beer</th>
+              <th>Style</th>
+              <th>ABV / EBC</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for tap in taps|sort(attribute='id') %}
+            <tr>
+              <td colspan="3"><h4>Tap: {{tap.label}}</h4></td>
+              {% if tap.beer %}
+              <td><button type="button" name="clear_tap" class="btn btn-sm btn-default" data-tap-id="{{tap.id}}">Clear tap</button></td>
+              {% else %}
+              <td><button type="button" name="tap_keg" class="btn btn-sm btn-default" data-toggle="modal" data-target="#tap-keg-modal" data-tap-id="{{tap.id}}">Tap a keg</button></td>
+              {% endif %}
+            </tr>
+            <tr>
+              {% if tap.beer %}
+              <td>{{tap.beer.brewery.name}}</td>
+              <td>{{tap.beer.name}}</td>
+              <td>{{tap.beer.style}}</td>
+              <td>{{tap.beer.abv}}% <span class="label" id="tap_label{{tap.id}}">{{tap.beer.colour}}</span></td>
+              {% else %}
+              <td colspan="4">Nothing pouring</td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
       </div>
-
-    {% if tap.beer %}
-      <div class="col-xs-6" id="border_tap{{tap.id}}">
-        <h4>{{tap.beer.name}} ({{tap.beer.style}})</h4>
-        <h4>{{tap.beer.brewery.name}}</h4>
-        <h5>{{tap.beer.abv}}%</h5>
-      </div>
-      <div class="col-xs-4">
-        <button type="button" name="clear_tap" class="btn btn-default" data-tap-id="{{tap.id}}">Clear tap</button>
-      </div>
-      {% else %}
-      <div class="col-xs-6"></div>
-      <div class="col-xs-4">
-        <button type="button" name="tap_keg" class="btn btn-default" data-toggle="modal" data-target="#tap-keg-modal" data-tap-id="{{tap.id}}">Tap a keg</button>
-      </div>
-      {% endif %}
     </div>
-
-    <hr>
-
-    {% endfor %}
-
   </div>
 </div>
 
@@ -140,7 +149,7 @@
 {% block endbody %}
 <script type="text/javascript">
 {% for tap in taps %}
-  $("#border_tap{{tap.id}}").css("border-left","3px solid "+get_hex_from_ebc({{tap.beer.colour}}));
+  $("span#tap_label{{tap.id}}").css("background-color",get_hex_from_ebc({{tap.beer.colour}}));
 {% endfor %}
 
 $("button[name='clear_tap']").on('click', function() {
