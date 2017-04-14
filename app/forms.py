@@ -41,7 +41,7 @@ class ProfileForm(FlaskForm):
             msg = 'A brewery must be selected if the person is a brewer'
             self.brewery.errors.append(msg)
             return False
-        if self.current_password.data:
+        if self.password.data:
             current = Person.query.get(current_user.id)
             if not bcrypt.check_password_hash(current.password, self.current_password.data):
                 msg = 'Current password is incorrect.  Please try again.'
