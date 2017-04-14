@@ -43,7 +43,7 @@
     <h3>Set a password</h3>
     <p>
       <label for="password">
-        Password
+        New password
           {{ form.password(size=80, class_="form-control") }}
           {% for error in form.password.errors %}
             <span style="color: #f33;">[{{ error }}]</span>
@@ -52,7 +52,7 @@
     </p>
     <p>
       <label for="confirm_password">
-        Confirm password
+        Re-enter new password
           {{ form.confirm_password(size=80, class_="form-control") }}
           {% for error in form.confirm_password.errors %}
             <span style="color: #f33;">[{{ error }}]</span>
