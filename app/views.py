@@ -335,6 +335,39 @@ def new_person():
                     form=form,
                     admin_template=True)
 
+
+@app.route('/brewery/edit', methods=['GET', 'POST'])
+@app.route('/brewery/<id>/edit', methods=['GET', 'POST'])
+@login_required
+def manage_brewery(id=None):
+    if not current_user.is_admin and not current_user.is_brewer:
+        return abort(401)
+    form = NewBrewery(request.form)
+    if form.validate_on_submit():
+        brewery = Brewery.query.get_or_404(id)
+        brewery.name = form.name.data
+        brewery.address = form.address.data
+        db.session.add(brewery)
+        db.session.commit()
+        flash("Brewery updated successfully", "success")
+        return redirect(url_for('manage_beers', id=brewery.id))
+    if current_user.is_admin:
+        manageable_locations = Brewery.query.all()
+    elif current_user.is_brewer:
+        manageable_locations = Brewery.query.filter_by(brewer_id=current_user.id).all()
+    if id:
+        brewery = Brewery.query.get_or_404(id)
+    else:
+        brewery = manageable_locations[0]
+    form.name.data = brewery.name
+    form.address.data = brewery.address
+    return render_template('manage_brewery.html',
+                            title="Manage brewery",
+                            form=form,
+                            brewery=brewery,
+                            manageable_locations=manageable_locations,
+                            admin_template=True)
+
 ## AJAX ##
 
 @app.route('/brewery/<id>/beers.json', methods=['GET'])
