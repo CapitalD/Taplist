@@ -2,6 +2,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField, BooleanField, DecimalField, SelectField, SubmitField, PasswordField, HiddenField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import DataRequired, NumberRange, Optional, Email, EqualTo
+from models import Person
+from flask_login import current_user
+from . import bcrypt
 
 class NewLocationForm(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
@@ -14,7 +17,10 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Log in')
 
 class ProfileForm(FlaskForm):
+    firstname = StringField('firstname', validators=[DataRequired()])
+    lastname = StringField('lastname', validators=[DataRequired()])
     email = StringField('email', validators=[Email()])
+    current_password = PasswordField('confirm_password')
     password = PasswordField('password', validators=[EqualTo('confirm_password', message='Passwords must match')])
     confirm_password = PasswordField('confirm_password')
     is_admin = BooleanField('is_admin')
@@ -35,6 +41,12 @@ class ProfileForm(FlaskForm):
             msg = 'A brewery must be selected if the person is a brewer'
             self.brewery.errors.append(msg)
             return False
+        if self.password.data:
+            current = Person.query.get(current_user.id)
+            if not bcrypt.check_password_hash(current.password, self.current_password.data):
+                msg = 'Current password is incorrect.  Please try again.'
+                self.current_password.errors.append(msg)
+                return False
         return True
 
 class TapKeg(FlaskForm):

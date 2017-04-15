@@ -9,6 +9,27 @@
   <form action="" method="post" name="login">
     {{ form.hidden_tag() }}
     <h3>Your profile details</h3>
+
+    <p>
+      <label for="firstname">
+        First name
+          {{ form.firstname(size=80, class_="form-control") }}
+          {% for error in form.firstname.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+      </label>
+    </p>
+
+    <p>
+      <label for="lastname">
+        Last name
+          {{ form.lastname(size=80, class_="form-control") }}
+          {% for error in form.lastname.errors %}
+            <span style="color: #f33;">[{{ error }}]</span>
+          {% endfor %}
+      </label>
+    </p>
+
     <p>
       <label for="email">
         Email
@@ -23,8 +44,18 @@
     <p>Leave these fields blank if you do not want to change your password</p>
     <fieldset style="padding-left: 1.5em">
       <p>
+        <label for="current_password">
+          Current password
+            {{ form.current_password(size=80, class_="form-control") }}
+            {% for error in form.current_password.errors %}
+              <span style="color: #f33;">[{{ error}}]</span>
+            {% endfor %}
+        </label>
+      </p>
+
+      <p>
         <label for="password">
-          Password
+          New password
             {{ form.password(size=80, class_="form-control") }}
             {% for error in form.password.errors %}
               <span style="color: #f33;">[{{ error }}]</span>
@@ -33,7 +64,7 @@
       </p>
       <p>
         <label for="confirm_password">
-          Confirm password
+          Re-enter new password
             {{ form.confirm_password(size=80, class_="form-control") }}
             {% for error in form.confirm_password.errors %}
               <span style="color: #f33;">[{{ error }}]</span>
@@ -75,7 +106,7 @@
     </p>
     {% endif %}
     <p>
-      <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a> 
+      <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a>
       {{ form.submit(class_="btn btn-primary") }}
     </p>
   </form>
