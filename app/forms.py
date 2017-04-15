@@ -6,7 +6,7 @@ from models import Person
 from flask_login import current_user
 from . import bcrypt
 
-class NewLocationForm(FlaskForm):
+class NewLocation(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
     address = StringField('address', validators=[DataRequired()])
     submit = SubmitField('Add location')

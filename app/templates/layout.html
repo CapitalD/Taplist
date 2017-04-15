@@ -58,7 +58,7 @@
                   {% if current_user.is_admin or current_user.is_manager %}
                   <li class="dropdown-header">Location manager</li>
                   <li><a href="{{ url_for('manage_taps') }}">Manage taps</a></li>
-                  <li><a href="#"><i>Manage location</i></a></li>
+                  <li><a href="{{ url_for('manage_location') }}">Manage location</a></li>
                   <li role="separator" class="divider"></li>
                   {% endif %}
                   {% if current_user.is_admin or current_user.is_brewer %}

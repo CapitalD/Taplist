@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, abort, jsonify, request, f
 from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person, Brewery, Beer
-from forms import NewLocationForm, LoginForm, ProfileForm, TapKeg, NewTap, NewBrewery, NewBeer
+from forms import NewLocation, LoginForm, ProfileForm, TapKeg, NewTap, NewBrewery, NewBeer
 
 
 @app.route('/')
@@ -67,7 +67,7 @@ def logout():
 def add_location():
     if not current_user.is_admin:
         return abort(401)
-    form = NewLocationForm()
+    form = NewLocation()
     if form.validate_on_submit():
         location = Location(name=form.name.data, address=form.address.data)
         db.session.add(location)
@@ -365,6 +365,39 @@ def manage_brewery(id=None):
                             title="Manage brewery",
                             form=form,
                             brewery=brewery,
+                            manageable_locations=manageable_locations,
+                            admin_template=True)
+
+
+@app.route('/location/edit', methods=['GET', 'POST'])
+@app.route('/location/<id>/edit', methods=['GET', 'POST'])
+@login_required
+def manage_location(id=None):
+    if not current_user.is_admin and not current_user.is_manager:
+        return abort(401)
+    form = NewLocation(request.form)
+    if form.validate_on_submit():
+        location = Location.query.get_or_404(id)
+        location.name = form.name.data
+        location.address = form.address.data
+        db.session.add(location)
+        db.session.commit()
+        flash("Location updated successfully", "success")
+        return redirect(url_for('manage_taps', id=location.id))
+    if current_user.is_admin:
+        manageable_locations = Location.query.all()
+    elif current_user.is_manager:
+        manageable_locations = Location.query.filter_by(brewer_id=current_user.id).all()
+    if id:
+        location = Location.query.get_or_404(id)
+    else:
+        location = manageable_locations[0]
+    form.name.data = location.name
+    form.address.data = location.address
+    return render_template('manage_location.html',
+                            title="Manage location",
+                            form=form,
+                            location=location,
                             manageable_locations=manageable_locations,
                             admin_template=True)
 
