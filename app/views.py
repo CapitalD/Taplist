@@ -127,7 +127,7 @@ def manage_taps(id=None):
     if current_user.is_admin:
         manageable_locations = Location.query.all()
     elif current_user.is_manager:
-        manageable_locations = Location.query.filter_by(manager_id=current_user.id).all()
+        manageable_locations = Location.query.filter(Location.managers.any(id=current_user.id)).all()
     if id:
         location = Location.query.get_or_404(id)
     else:
@@ -225,7 +225,7 @@ def manage_beers(id=None):
     if current_user.is_admin:
         manageable_locations = Brewery.query.all()
     elif current_user.is_brewer:
-        manageable_locations = Brewery.query.filter_by(brewer_id=current_user.id).all()
+        manageable_locations = Brewery.query.filter(Brewery.brewers.any(id=current_user.id)).all()
     if id:
         brewery = Brewery.query.get_or_404(id)
     else:
@@ -319,11 +319,11 @@ def new_person():
         db.session.commit()
         if person.is_manager:
             location = Location.query.get(form.location.data.id)
-            location.manager = person
+            location.managers.append(person)
             db.session.add(location)
         if person.is_brewer:
             brewery = Brewery.query.get(form.brewery.data.id)
-            brewery.brewer = person
+            brewery.brewers.append(person)
             db.session.add(brewery)
         db.session.commit()
         flash("Person added successfully", "success")
@@ -354,7 +354,7 @@ def manage_brewery(id=None):
     if current_user.is_admin:
         manageable_locations = Brewery.query.all()
     elif current_user.is_brewer:
-        manageable_locations = Brewery.query.filter_by(brewer_id=current_user.id).all()
+        manageable_locations = Brewery.query.filter(Brewery.brewers.any(id=current_user.id)).all()
     if id:
         brewery = Brewery.query.get_or_404(id)
     else:
@@ -387,7 +387,7 @@ def manage_location(id=None):
     if current_user.is_admin:
         manageable_locations = Location.query.all()
     elif current_user.is_manager:
-        manageable_locations = Location.query.filter_by(brewer_id=current_user.id).all()
+        manageable_locations = Location.query.filter(Location.managers.any(id=current_user.id)).all()
     if id:
         location = Location.query.get_or_404(id)
     else:

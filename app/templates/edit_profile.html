@@ -107,7 +107,7 @@
     {% endif %}
     <p>
       <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a>
-      {{ form.submit(class_="btn btn-primary") }}
+      {{ form.save_changes(class_="btn btn-primary") }}
     </p>
   </form>
 {% endblock %}

@@ -13,13 +13,17 @@ class Tap(db.Model):
     def __repr__(self):
         return '<Tap %r>' % (self.label)
 
+managers = db.Table('managers',
+    db.Column('person_id', db.Integer, db.ForeignKey('person.id'), primary_key=True),
+    db.Column('location_id', db.Integer, db.ForeignKey('location.id'), primary_key=True)
+)
+
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     address = db.Column(db.String(255))
     taps = db.relationship('Tap', backref='location', lazy='dynamic')
-    manager_id = db.Column(db.Integer, db.ForeignKey('person.id'))
-    manager = db.relationship('Person', backref='manager')
+    managers = db.relationship('Person', secondary=managers, lazy='subquery', backref=db.backref('locations', lazy=True))
 
     def __repr__(self):
         return '<Location %r>' % (self.name)
@@ -37,16 +41,21 @@ class Beer(db.Model):
     def __repr__(self):
         return '<Beer %r>' % (self.name)
 
+brewers = db.Table('brewers',
+    db.Column('person_id', db.Integer, db.ForeignKey('person.id'), primary_key=True),
+    db.Column('brewery_id', db.Integer, db.ForeignKey('brewery.id'), primary_key=True)
+)
+
 class Brewery(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     address = db.Column(db.String(255))
     beers = db.relationship('Beer', backref='beers', lazy='dynamic')
-    brewer_id = db.Column(db.Integer, db.ForeignKey('person.id'))
-    brewer = db.relationship('Person', backref='brewer')
+    brewers = db.relationship('Person', secondary=brewers, lazy='subquery', backref=db.backref('breweries', lazy=True))
 
     def __repr__(self):
         return '<Brewery %r>' % (self.name)
+
 
 # User is a reserved word for Postgres
 class Person(db.Model):

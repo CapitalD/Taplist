@@ -28,7 +28,8 @@ class ProfileForm(FlaskForm):
     location = QuerySelectField(get_label='name', allow_blank=True, blank_text='Choose a location to manage')
     is_brewer = BooleanField('is_brewer')
     brewery = QuerySelectField(get_label='name', allow_blank=True, blank_text='Choose a brewery to manage')
-    submit = SubmitField('Save changes')
+    add_person = SubmitField('Add person')
+    save_changes = SubmitField('Save changes')
 
     def validate(self):
         if not super(ProfileForm, self).validate():
@@ -41,7 +42,7 @@ class ProfileForm(FlaskForm):
             msg = 'A brewery must be selected if the person is a brewer'
             self.brewery.errors.append(msg)
             return False
-        if self.password.data:
+        if self.save_changes.data and self.password.data:
             current = Person.query.get(current_user.id)
             if not bcrypt.check_password_hash(current.password, self.current_password.data):
                 msg = 'Current password is incorrect.  Please try again.'
