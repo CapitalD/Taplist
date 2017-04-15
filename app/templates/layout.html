@@ -17,6 +17,7 @@
   </head>
   <body>
 
+    {% if not request.args.get('fs') == '1' %}
     <nav class="navbar navbar-default{{ " navbar-inverse" if admin_template }}">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -83,6 +84,7 @@
       </div>
 
     </nav>
+    {% endif %}
 
     <div class="container">
       {% with messages = get_flashed_messages(with_categories=true) %}
