@@ -16,7 +16,8 @@ def index():
 def view_location(id):
     location = Location.query.get_or_404(id)
     all_locations = Location.query.all()
-
+    if request.args.get('fs') == '1':
+        flash('Press ESC to exit fullscreen','info')
     return render_template('view_location.html',
                             title=location.name,
                             location=location,
