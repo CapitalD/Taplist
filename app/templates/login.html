@@ -7,26 +7,26 @@
 
   <form action="" method="post" name="login">
     {{ form.hidden_tag() }}
-    <p>
-      <label for="email">
+    <p class="form-group{% if form.email.errors %} has-error{% endif %}">
+      <label class="control-label" for="email">
         Email
           {{ form.email(size=80, class_="form-control") }}
           {% for error in form.email.errors %}
-            <span style="color: #f33;">[{{ error }}]</span>
+            <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
     </p>
-    <p>
-      <label for="password">
+    <p class="form-group{% if form.password.errors %} has-error{% endif %}">
+      <label class="control-label" for="password">
         Password
           {{ form.password(size=80, class_="form-control") }}
           {% for error in form.password.errors %}
-            <span style="color: #f33;">[{{ error }}]</span>
+            <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
     </p>
     <p>
-      <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a> 
+      <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a>
       {{ form.submit(class_="btn btn-primary") }}
     </p>
   </form>
