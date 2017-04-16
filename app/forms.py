@@ -42,6 +42,11 @@ class ProfileForm(FlaskForm):
             msg = 'A brewery must be selected if the person is a brewer'
             self.brewery.errors.append(msg)
             return False
+        if self.add_person.data and not all([self.password.data,self.confirm_password.data]):
+            msg = 'Both password fields are required'
+            self.password.errors.append(msg)
+            self.confirm_password.errors.append(msg)
+            return False
         if self.save_changes.data and any([self.current_password.data,self.password.data,self.confirm_password.data]) and not all([self.current_password.data,self.password.data,self.confirm_password.data]):
             msg = 'All three password fields are all required to change your password'
             self.current_password.errors.append(msg)
