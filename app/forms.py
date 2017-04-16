@@ -42,7 +42,13 @@ class ProfileForm(FlaskForm):
             msg = 'A brewery must be selected if the person is a brewer'
             self.brewery.errors.append(msg)
             return False
-        if self.save_changes.data and self.password.data:
+        if self.save_changes.data and any([self.current_password.data,self.password.data,self.confirm_password.data]) and not all([self.current_password.data,self.password.data,self.confirm_password.data]):
+            msg = 'All three password fields are all required to change your password'
+            self.current_password.errors.append(msg)
+            self.password.errors.append(msg)
+            self.confirm_password.errors.append(msg)
+            return False
+        if self.save_changes.data and all([self.current_password.data,self.password.data,self.confirm_password.data]):
             current = Person.query.get(current_user.id)
             if not bcrypt.check_password_hash(current.password, self.current_password.data):
                 msg = 'Current password is incorrect.  Please try again.'

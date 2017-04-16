@@ -10,32 +10,32 @@
     {{ form.hidden_tag() }}
     <h3>Your profile details</h3>
 
-    <p>
-      <label for="firstname">
+    <p class="form-group{% if form.firstname.errors %} has-error{% endif %}">
+      <label class="control-label" for="firstname">
         First name
           {{ form.firstname(size=80, class_="form-control") }}
           {% for error in form.firstname.errors %}
-            <span style="color: #f33;">[{{ error }}]</span>
+            <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
     </p>
 
-    <p>
-      <label for="lastname">
+    <p class="form-group{% if form.lastname.errors %} has-error{% endif %}">
+      <label class="control-label" for="lastname">
         Last name
           {{ form.lastname(size=80, class_="form-control") }}
           {% for error in form.lastname.errors %}
-            <span style="color: #f33;">[{{ error }}]</span>
+            <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
     </p>
 
-    <p>
-      <label for="email">
+    <p class="form-group{% if form.email.errors %} has-error{% endif %}">
+      <label class="control-label" for="email">
         Email
           {{ form.email(size=80, class_="form-control") }}
           {% for error in form.email.errors %}
-            <span style="color: #f33;">[{{ error }}]</span>
+            <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
     </p>
@@ -43,31 +43,31 @@
     <h3>Change your password</h3>
     <p>Leave these fields blank if you do not want to change your password</p>
     <fieldset style="padding-left: 1.5em">
-      <p>
-        <label for="current_password">
+      <p class="form-group{% if form.current_password.errors %} has-error{% endif %}">
+        <label class="control-label" for="current_password">
           Current password
             {{ form.current_password(size=80, class_="form-control") }}
             {% for error in form.current_password.errors %}
-              <span style="color: #f33;">[{{ error}}]</span>
+              <span class="help-block">&gt; {{ error}}</span>
             {% endfor %}
         </label>
       </p>
 
-      <p>
-        <label for="password">
+      <p class="form-group{% if form.password.errors %} has-error{% endif %}">
+        <label class="control-label" for="password">
           New password
             {{ form.password(size=80, class_="form-control") }}
             {% for error in form.password.errors %}
-              <span style="color: #f33;">[{{ error }}]</span>
+              <span class="help-block">&gt; {{ error }}</span>
             {% endfor %}
         </label>
       </p>
-      <p>
-        <label for="confirm_password">
+      <p class="form-group{% if form.confirm_password.errors %} has-error{% endif %}">
+        <label class="control-label" for="confirm_password">
           Re-enter new password
             {{ form.confirm_password(size=80, class_="form-control") }}
             {% for error in form.confirm_password.errors %}
-              <span style="color: #f33;">[{{ error }}]</span>
+              <span class="help-block">&gt; {{ error }}</span>
             {% endfor %}
         </label>
       </p>
@@ -75,32 +75,32 @@
 
     {% if current_user.is_admin %}
     <h3>Roles</h3>
-    <p>
-      <label for="admin">
+    <p class="form-group{% if form.is_admin.errors %} has-error{% endif %}">
+      <label class="control-label" for="admin">
         {{ form.is_admin(checked=person.is_admin) }}
         Admin?
         {% for error in form.is_admin.errors %}
-          <span style="color: #f33;">[{{ error }}]</span>
+          <span class="help-block">&gt; {{ error }}</span>
         {% endfor %}
       </label>
     </p>
 
-    <p>
-      <label for="manager">
+    <p class="form-group{% if form.is_manager.errors %} has-error{% endif %}">
+      <label class="control-label" for="manager">
         {{ form.is_manager(checked=person.is_manager) }}
         Bar manager?
         {% for error in form.is_manager.errors %}
-          <span style="color: #f33;">[{{ error }}]</span>
+          <span class="help-block">&gt; {{ error }}</span>
         {% endfor %}
       </label>
     </p>
 
-    <p>
-      <label for="brewer">
+    <p class="form-group{% if form.is_brewer.errors %} has-error{% endif %}">
+      <label class="control-label" for="brewer">
         {{ form.is_brewer(checked=person.is_brewer) }}
         Brewer?
         {% for error in form.is_brewer.errors %}
-          <span style="color: #f33;">[{{ error }}]</span>
+          <span class="help-block">&gt; {{ error }}</span>
         {% endfor %}
       </label>
     </p>
