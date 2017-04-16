@@ -95,6 +95,17 @@
       </label>
     </p>
 
+    <div id="location_selection" class="hidden" style="margin-left: 2em;">
+      <p class="form-group{% if form.location.errors %} has-error{% endif %}">
+        <label class="control-label" for="location">
+          {{ form.location(class_="form-control") }}
+          {% for error in form.location.errors %}
+            <span class="help-block">&gt; {{ error }}</span>
+          {% endfor %}
+        </label>
+      </p>
+    </div>
+
     <p class="form-group{% if form.is_brewer.errors %} has-error{% endif %}">
       <label class="control-label" for="brewer">
         {{ form.is_brewer(checked=person.is_brewer) }}
@@ -104,10 +115,47 @@
         {% endfor %}
       </label>
     </p>
+
+    <div id="brewery_selection" class="hidden" style="margin-left: 2em;">
+      <p class="form-group{% if form.brewery.errors %} has-error{% endif %}">
+        <label class="control-label" for="brewery">
+          {{ form.brewery(class_="form-control") }}
+          {% for error in form.brewery.errors %}
+            <span class="help-block">&gt; {{ error }}</span>
+          {% endfor %}
+        </label>
+      </p>
+    </div>
+
     {% endif %}
     <p>
       <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a>
       {{ form.save_changes(class_="btn btn-primary") }}
     </p>
   </form>
+{% endblock %}
+
+{% block endbody %}
+<script type="text/javascript">
+  function show_if_checked(field, container) {
+      if ($(field).prop("checked")) {
+        $(container).removeClass("hidden");
+      } else {
+        $(container).addClass("hidden");
+      }
+  }
+
+  $("input#is_brewer").on("click", function() {
+    show_if_checked(this, "#brewery_selection");
+  });
+
+  $("input#is_manager").on("click", function() {
+    show_if_checked(this, "#location_selection");
+  });
+
+  $(function() {
+    show_if_checked("input#is_brewer","#brewery_selection");
+    show_if_checked("input#is_manager","#location_selection");
+  });
+</script>
 {% endblock %}

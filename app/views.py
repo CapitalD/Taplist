@@ -88,6 +88,8 @@ def add_location():
 @login_required
 def edit_profile(id):
     form = ProfileForm()
+    form.location.query = Location.query.order_by('name')
+    form.brewery.query = Brewery.query.order_by('name')
     if form.validate_on_submit():
         person = Person.query.get_or_404(id)
         person.firstname = form.firstname.data
@@ -101,12 +103,26 @@ def edit_profile(id):
             person.is_brewer = form.is_brewer.data
         db.session.add(person)
         db.session.commit()
+        if person.is_manager:
+            location = Location.query.get(form.location.data.id)
+            location.managers.append(person)
+            db.session.add(location)
+            db.session.commit()
+        if person.is_brewer:
+            brewery = Brewery.query.get(form.brewery.data.id)
+            brewery.brewers.append(person)
+            db.session.add(brewery)
+            db.session.commit()
         flash("Profile edited successfully", "success")
         return redirect(url_for("index"))
     person = Person.query.get_or_404(id)
     form.firstname.data = person.firstname
     form.lastname.data = person.lastname
     form.email.data = person.email
+    if person.is_manager:
+        form.location.data = person.locations[0]
+    if person.is_brewer:
+        form.brewery.data = person.breweries[0]
     if form.errors:
         flash("Changes to profile could not be saved.  Please correct errors and try again.", "error")
     return render_template('edit_profile.html',
