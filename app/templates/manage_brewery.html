@@ -40,10 +40,10 @@
             <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
-    </p>
-    <p>
+    </div>
+    <div>
       <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a>
       {{ form.submit(value="Save changes", class_="btn btn-primary") }}
-    </p>
+    </div>
   </form>
 {% endblock %}
