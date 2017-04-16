@@ -89,28 +89,28 @@
         </div>
         <div class="modal-body">
           {{ new_beer.hidden_tag() }}
-          <p>
-            <label for="name">
+          <div class="form-group{% if new_beer.name.errors %} has-error{% endif %}">
+            <label class="control-label" for="name">
               Beer name
                 {{ new_beer.name(size="40", class_="form-control") }}
                 {% for error in new_beer.name.errors %}
-                  <span style="color: #f33;">[{{ error }}]</span>
+                  <span class="help-block">&gt; {{ error }}</span>
                 {% endfor %}
             </label>
-          </p>
+          </div>
 
-          <p>
-            <label for="style">
+          <div class="form-group{% if new_beer.style.errors %} has-error{% endif %}">
+            <label class="control-label" for="style">
               Beer style
                 {{ new_beer.style(size="40", class_="form-control") }}
                 {% for error in new_beer.style.errors %}
-                  <span style="color: #f33;">[{{ error }}]</span>
+                  <span class="help-block">&gt; {{ error }}</span>
                 {% endfor %}
             </label>
-          </p>
+          </div>
 
-          <p>
-            <label for="abv">
+          <div class="form-group{% if new_beer.abv.errors %} has-error{% endif %}">
+            <label class="control-label" for="abv">
               Beer ABV
                 <div class="input-group" style="width: 100px;">
                   {{ new_beer.abv(size="20", class_="form-control") }}
@@ -119,13 +119,13 @@
                   </div>
                 </div>
                 {% for error in new_beer.abv.errors %}
-                  <span style="color: #f33;">[{{ error }}]</span>
+                  <span class="help-block">&gt; {{ error }}</span>
                 {% endfor %}
             </label>
-          </p>
+          </div>
 
-          <p>
-            <label for="colour">
+          <div class="form-group{% if new_beer.colour.errors %} has-error{% endif %}">
+            <label class="control-label" for="colour">
               Beer colour
                 <div class="input-group" style="width: 120px;">
                   {{ new_beer.colour(class_="form-control") }}
@@ -134,14 +134,15 @@
                   </div>
                 </div>
                 {% for error in new_beer.colour.errors %}
-                  <span style="color: #f33;">[{{ error }}]</span>
+                  <span class="help-block">&gt; {{ error }}</span>
                 {% endfor %}
             </label>
-          </p>
+          </div>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          {{ new_beer.submit(class_="btn btn-primary") }}
+          {{ new_beer.add_beer(class_="btn btn-primary") }}
         </div>
       </div>
     </form>
@@ -159,28 +160,28 @@
         </div>
         <div class="modal-body">
           {{ edit_beer.hidden_tag() }}
-          <p>
-            <label for="name">
+          <div class="form-group{% if edit_beer.name.errors %} has-error{% endif %}">
+            <label class="control-label" for="name">
               Beer name
                 {{ edit_beer.name(size="40", class_="form-control") }}
                 {% for error in edit_beer.name.errors %}
-                  <span style="color: #f33;">[{{ error }}]</span>
+                  <span class="help-block">&gt; {{ error }}</span>
                 {% endfor %}
             </label>
-          </p>
+          </div>
 
-          <p>
-            <label for="style">
+          <div class="form-group{% if edit_beer.style.errors %} has-error{% endif %}">
+            <label class="control-label" for="style">
               Beer style
                 {{ edit_beer.style(size="40", class_="form-control") }}
                 {% for error in edit_beer.style.errors %}
-                  <span style="color: #f33;">[{{ error }}]</span>
+                  <span class="help-block">&gt; {{ error }}</span>
                 {% endfor %}
             </label>
-          </p>
+          </div>
 
-          <p>
-            <label for="abv">
+          <div class="form-group{% if edit_beer.abv.errors %} has-error{% endif %}">
+            <label class="control-label" for="abv">
               Beer ABV
                 <div class="input-group" style="width: 100px;">
                   {{ edit_beer.abv(size="20", class_="form-control") }}
@@ -189,13 +190,13 @@
                   </div>
                 </div>
                 {% for error in edit_beer.abv.errors %}
-                  <span style="color: #f33;">[{{ error }}]</span>
+                  <span class="help-block">&gt; {{ error }}</span>
                 {% endfor %}
             </label>
-          </p>
+          </div>
 
-          <p>
-            <label for="colour">
+          <div class="form-group{% if edit_beer.colour.errors %} has-error{% endif %}">
+            <label class="control-label" for="colour">
               Beer colour
                 <div class="input-group" style="width: 120px;">
                   {{ edit_beer.colour(class_="form-control") }}
@@ -204,14 +205,15 @@
                   </div>
                 </div>
                 {% for error in edit_beer.colour.errors %}
-                  <span style="color: #f33;">[{{ error }}]</span>
+                  <span class="help-block">&gt; {{ error }}</span>
                 {% endfor %}
             </label>
-          </p>
+          </div>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          {{ edit_beer.submit(value="Save changes", class_="btn btn-primary") }}
+          {{ edit_beer.save_changes(class_="btn btn-primary") }}
         </div>
       </div>
     </form>

@@ -82,4 +82,5 @@ class NewBeer(FlaskForm):
     style = StringField('style', validators=[DataRequired()])
     abv = DecimalField('abv', validators=[DataRequired()])
     colour = DecimalField('colour', validators=[Optional()])
-    submit = SubmitField('Add beer')
+    add_beer = SubmitField('Add beer')
+    save_changes = SubmitField('Save changes')
