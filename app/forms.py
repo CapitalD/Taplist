@@ -14,7 +14,7 @@ class NewLocation(FlaskForm):
 class LoginForm(FlaskForm):
     email = StringField('email', validators=[DataRequired(), Email()])
     password = PasswordField('password', validators=[DataRequired()])
-    submit = SubmitField('Log in')
+    login = SubmitField('Log in')
 
 class ProfileForm(FlaskForm):
     firstname = StringField('firstname', validators=[DataRequired()])

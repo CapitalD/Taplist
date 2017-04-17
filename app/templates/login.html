@@ -7,7 +7,7 @@
 
   <form action="" method="post" name="login">
     {{ form.hidden_tag() }}
-    <p class="form-group{% if form.email.errors %} has-error{% endif %}">
+    <div class="form-group{% if form.email.errors %} has-error{% endif %}">
       <label class="control-label" for="email">
         Email
           {{ form.email(size=80, class_="form-control") }}
@@ -15,8 +15,8 @@
             <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
-    </p>
-    <p class="form-group{% if form.password.errors %} has-error{% endif %}">
+    </div>
+    <div class="form-group{% if form.password.errors %} has-error{% endif %}">
       <label class="control-label" for="password">
         Password
           {{ form.password(size=80, class_="form-control") }}
@@ -24,10 +24,10 @@
             <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
-    </p>
-    <p>
+    </div>
+    <div>
       <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a>
-      {{ form.submit(class_="btn btn-primary") }}
-    </p>
+      {{ form.login(class_="btn btn-primary") }}
+    </div>
   </form>
 {% endblock %}
