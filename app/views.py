@@ -256,10 +256,14 @@ def manage_beers(id=None):
                             admin_template=True)
 
 
-@app.route('/brewery/<int:brewery_id>/beer/new', methods=['POST'])
+@app.route('/brewery/<int:id>/beer/new', methods=['POST'])
 @login_required
-def new_beer(brewery_id):
-    brewery = Brewery.query.get_or_404(brewery_id)
+def new_beer(id):
+    if not current_user.is_admin and not current_user.is_brewer:
+        return abort(401)
+    if not [i for i in current_user.breweries if i.id == id]:
+        return abort(401)
+    brewery = Brewery.query.get_or_404(id)
     new_beer = NewBeer(request.form)
     if new_beer.validate_on_submit():
         beer = Beer(name=new_beer.name.data,
@@ -284,7 +288,11 @@ def new_beer(brewery_id):
 @app.route('/beer/<int:id>/edit', methods=['POST'])
 @login_required
 def edit_beer(id):
+    if not current_user.is_admin and not current_user.is_brewer:
+        return abort(401)
     beer = Beer.query.get_or_404(id)
+    if not [i for i in current_user.breweries if i.id == beer.brewery.id]:
+        return abort(401)
     edit_beer = NewBeer(request.form)
     if edit_beer.validate_on_submit():
         beer.name = edit_beer.name.data
@@ -308,7 +316,11 @@ def edit_beer(id):
 @app.route('/beer/<int:id>/delete', methods=['GET'])
 @login_required
 def delete_beer(id):
+    if not current_user.is_admin and not current_user.is_brewer:
+        return abort(401)
     beer = Beer.query.get_or_404(id)
+    if not [i for i in current_user.breweries if i.id == beer.brewery.id]:
+        return abort(401)
     brewery_id = beer.brewery.id
     db.session.delete(beer)
     db.session.commit()
