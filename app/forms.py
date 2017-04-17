@@ -67,8 +67,17 @@ class TapKeg(FlaskForm):
     beer = QuerySelectField(get_label='name', allow_blank=True, blank_text='Choose a brewery before choosing a beer')
     tap_keg = SubmitField('Tap keg')
 
+    def validate(self):
+        if not super(TapKeg, self).validate():
+            return False
+        if self.tap_keg.data and not all([self.brewery.data, self.beer.data]):
+            msg = 'You must choose both a brewery and a beer'
+            self.brewery.errors.append(msg)
+            self.beer.errors.append(msg)
+            return False
+        return True
+
 class NewTap(FlaskForm):
-    location_id = HiddenField('location_id', validators=[DataRequired()])
     label = StringField('label', validators=[DataRequired()])
     add_tap = SubmitField('Add tap')
 

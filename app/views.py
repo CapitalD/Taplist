@@ -133,7 +133,7 @@ def edit_profile(id):
 
 
 @app.route('/location/taps/edit', methods=['GET'])
-@app.route('/location/<id>/taps/edit', methods=['GET'])
+@app.route('/location/<id>/taps/edit', methods=['GET', 'POST'])
 @login_required
 def manage_taps(id=None):
     if not current_user.is_admin and not current_user.is_manager:
@@ -142,6 +142,21 @@ def manage_taps(id=None):
     new_tap_form = NewTap()
     keg_form.brewery.query = Brewery.query.order_by('name')
     keg_form.beer.query = Beer.query.order_by('name')
+    if keg_form.tap_keg.data and keg_form.validate_on_submit():
+        tap = Tap.query.get_or_404(keg_form.tap_id.data)
+        tap.beer = keg_form.beer.data
+        db.session.add(tap)
+        db.session.commit()
+    if keg_form.errors:
+        flash('An error occurred when trying to tap the keg.  Please try again.','error')
+    if new_tap_form.add_tap.data and new_tap_form.validate_on_submit():
+        location = Location.query.get_or_404(id)
+        new_tap = Tap(label=new_tap_form.label.data, location=location)
+        db.session.add(new_tap)
+        db.session.commit()
+        flash("Tap added successfully", "success")
+    if new_tap_form.errors:
+        flash("A new tap couldn't be added. Please try again.", "error")
     if current_user.is_admin:
         manageable_locations = Location.query.all()
     elif current_user.is_manager:
@@ -168,36 +183,6 @@ def clear_tap(id):
     db.session.add(tap)
     db.session.commit()
     return redirect(url_for('manage_taps', id=tap.location.id))
-
-
-@app.route('/tap/<id>/set', methods=['POST'])
-@login_required
-def tap_keg(id):
-    tap = Tap.query.get_or_404(id)
-    keg_form = TapKeg(request.form)
-    keg_form.brewery.query = Brewery.query.order_by('name')
-    keg_form.beer.query = Beer.query.order_by('name')
-    if keg_form.tap_keg.data and keg_form.validate_on_submit():
-        tap.beer = keg_form.beer.data
-        db.session.add(tap)
-        db.session.commit()
-        return redirect(url_for('manage_taps', id=tap.location.id))
-    flash("That keg couldn't be tapped for some reason.", "error")
-    return redirect(url_for('manage_taps', id=tap.location.id))
-
-
-@app.route('/location/<loc_id>/tap/new', methods=['POST'])
-@login_required
-def new_tap(loc_id):
-    location = Location.query.get_or_404(loc_id)
-    new_tap_form = NewTap(request.form)
-    if new_tap_form.add_tap.data and new_tap_form.validate_on_submit():
-        new_tap = Tap(label=new_tap_form.label.data, location=location)
-        db.session.add(new_tap)
-        db.session.commit()
-        flash("Tap added successfully", "success")
-        return redirect(url_for('manage_taps', id=new_tap.location.id))
-    flash("A new tap couldn't be added. Please try again.", "error")
 
 
 @app.route('/location/<loc_id>/tap/<tap_id>/delete', methods=['GET'])

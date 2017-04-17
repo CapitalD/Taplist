@@ -51,8 +51,8 @@
         <table class="table table-hover" id="manage_taps">
           <thead>
             <tr>
-              <th>Brewery</th>
               <th>Beer</th>
+              <th>Brewery</th>
               <th>Style</th>
               <th>ABV / EBC</th>
             </tr>
@@ -69,12 +69,12 @@
             </tr>
             <tr>
               {% if tap.beer %}
-              <td>{{tap.beer.brewery.name}}</td>
-              <td>{{tap.beer.name}}</td>
-              <td>{{tap.beer.style}}</td>
-              <td>{{tap.beer.abv}}% <span class="label" id="tap_label{{tap.id}}">{{tap.beer.colour}}</span></td>
+              <td style="border-top: none;">{{tap.beer.name}}</td>
+              <td style="border-top: none;">{{tap.beer.brewery.name}}</td>
+              <td style="border-top: none;">{{tap.beer.style}}</td>
+              <td style="border-top: none;">{{tap.beer.abv}}% <span class="label" id="tap_label{{tap.id}}">{{tap.beer.colour}}</span></td>
               {% else %}
-              <td colspan="4">Nothing pouring</td>
+              <td style="border-top: none;" colspan="4">Nothing pouring</td>
               {% endif %}
             </tr>
           {% endfor %}
@@ -87,7 +87,7 @@
 
 <div class="modal fade" id="tap-keg-modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
-    <form action="" method="post" name="manage_taps">
+    <form action="{{ url_for('manage_taps', id=location.id)}}" method="post" name="manage_taps">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
@@ -95,19 +95,25 @@
         </div>
         <div class="modal-body">
           {{ keg_form.hidden_tag() }}
-          <p>
-            <label for="brewery">
+          <div class="form-group{% if keg_form.brewery.errors %} has-error{% endif %}">
+            <label class="control-label" for="brewery">
               Brewery
                 {{ keg_form.brewery(class_="form-control") }}
+                {% for error in keg_form.brewery.errors %}
+                  <span class="help-block">&gt; {{ error }}</span>
+                {% endfor %}
             </label>
-          </p>
+          </div>
 
-          <p>
-            <label for="beer">
+          <div class="form-group{% if keg_form.beer.errors %} has-error{% endif %}">
+            <label class="control-label" for="beer">
               Beer
                 {{ keg_form.beer(class_="form-control", disabled=true) }}
+                {% for error in keg_form.beer.errors %}
+                  <span class="help-block">&gt; {{ error }}</span>
+                {% endfor %}
             </label>
-          </p>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -120,7 +126,7 @@
 
 <div class="modal fade" id="new-tap-modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
-    <form action="" method="post" name="new_tap">
+    <form action="{{ url_for('manage_taps', id=location.id)}}" method="post" name="new_tap">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
@@ -128,12 +134,15 @@
         </div>
         <div class="modal-body">
           {{ new_tap_form.hidden_tag() }}
-          <p>
-            <label for="label">
+          <div class="form-group{% if new_tap_form.label.errors %} has-error{% endif %}">
+            <label class="control-label" for="label">
               Label
                 {{ new_tap_form.label(class_="form-control") }}
+                {% for error in new_tap_form.label.errors %}
+                  <span class="help-block">&gt; {{ error }}</span>
+                {% endfor %}
             </label>
-          </p>
+          </div>
 
         </div>
         <div class="modal-footer">
@@ -158,13 +167,14 @@ $("button[name='clear_tap']").on('click', function() {
 
 $("button[name='tap_keg']").on('click', function() {
   $("#tap_id").val($(this).data("tap-id"));
-  $("form[name='manage_taps']").attr("action", $SCRIPT_ROOT + "/tap/" + $(this).data("tap-id") + "/set");
 });
 
-$("button[name='new_tap']").on('click', function() {
-  $("#location_id").val({{ location.id }});
-  $("form[name='new_tap']").attr("action", $SCRIPT_ROOT + "/location/" + {{ location.id }} + "/tap/new");
-});
+{% if keg_form.errors %}
+  $("#tap-keg-modal").modal('show');
+{% endif %}
+{% if new_tap_form.errors %}
+  $("#new-tap-modal").modal('show');
+{% endif %}
 
 $("select#brewery").on('change', function() {
   if (isNaN($(this).val())) {
