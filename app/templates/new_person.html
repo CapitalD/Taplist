@@ -10,7 +10,7 @@
     {{ form.hidden_tag() }}
     <h3>Profile details</h3>
 
-    <p class="form-group{% if form.firstname.errors %} has-error{% endif %}">
+    <div class="form-group{% if form.firstname.errors %} has-error{% endif %}">
       <label class="control-label" for="firstname">
         First name
           {{ form.firstname(size=80, class_="form-control") }}
@@ -18,9 +18,9 @@
             <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
-    </p>
+    </div>
 
-    <p class="form-group{% if form.lastname.errors %} has-error{% endif %}">
+    <div class="form-group{% if form.lastname.errors %} has-error{% endif %}">
       <label class="control-label" for="lastname">
         Last name
           {{ form.lastname(size=80, class_="form-control") }}
@@ -28,9 +28,9 @@
             <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
-    </p>
+    </div>
 
-    <p class="form-group{% if form.email.errors %} has-error{% endif %}">
+    <div class="form-group{% if form.email.errors %} has-error{% endif %}">
       <label class="control-label" for="email">
         Email
           {{ form.email(size=80, class_="form-control") }}
@@ -38,10 +38,10 @@
             <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
-    </p>
+    </div>
 
     <h3>Set a password</h3>
-    <p class="form-group{% if form.password.errors %} has-error{% endif %}">
+    <div class="form-group{% if form.password.errors %} has-error{% endif %}">
       <label class="control-label" for="password">
         New password
           {{ form.password(size=80, class_="form-control") }}
@@ -49,8 +49,8 @@
             <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
-    </p>
-    <p class="form-group{% if form.confirm_password.errors %} has-error{% endif %}">
+    </div>
+    <div class="form-group{% if form.confirm_password.errors %} has-error{% endif %}">
       <label class="control-label" for="confirm_password">
         Re-enter new password
           {{ form.confirm_password(size=80, class_="form-control") }}
@@ -58,10 +58,10 @@
             <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
-    </p>
+    </div>
 
     <h3>Roles</h3>
-    <p class="form-group{% if form.is_admin.errors %} has-error{% endif %}">
+    <div class="form-group{% if form.is_admin.errors %} has-error{% endif %}">
       <label class="control-label" for="is_admin">
         {{ form.is_admin(checked=form.is_admin.data) }}
         Admin?
@@ -69,9 +69,9 @@
           <span class="help-block">&gt; {{ error }}</span>
         {% endfor %}
       </label>
-    </p>
+    </div>
 
-    <p class="form-group{% if form.is_manager.errors %} has-error{% endif %}">
+    <div class="form-group{% if form.is_manager.errors %} has-error{% endif %}">
       <label class="control-label" for="is_manager">
         {{ form.is_manager(checked=form.is_manager.data) }}
         Bar manager?
@@ -79,20 +79,20 @@
           <span class="help-block">&gt; {{ error }}</span>
         {% endfor %}
       </label>
-    </p>
+    </div>
 
     <div id="location_selection" class="hidden" style="margin-left: 2em;">
-      <p class="form-group{% if form.location.errors %} has-error{% endif %}">
+      <div class="form-group{% if form.location.errors %} has-error{% endif %}">
         <label class="control-label" for="location">
           {{ form.location(class_="form-control") }}
           {% for error in form.location.errors %}
             <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
         </label>
-      </p>
+      </div>
     </div>
 
-    <p class="form-group{% if form.is_brewer.errors %} has-error{% endif %}">
+    <div class="form-group{% if form.is_brewer.errors %} has-error{% endif %}">
       <label class="control-label" for="is_brewer">
         {{ form.is_brewer(checked=form.is_brewer.data) }}
         Brewer?
@@ -100,23 +100,23 @@
           <span class="help-block">&gt; {{ error }}</span>
         {% endfor %}
       </label>
-    </p>
+    </div>
 
     <div id="brewery_selection" class="hidden" style="margin-left: 2em;">
-      <p class="form-group{% if form.brewery.errors %} has-error{% endif %}">
+      <div class="form-group{% if form.brewery.errors %} has-error{% endif %}">
         <label class="control-label" for="brewery">
           {{ form.brewery(class_="form-control") }}
           {% for error in form.brewery.errors %}
             <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
         </label>
-      </p>
+      </div>
     </div>
 
-    <p>
+    <div>
       <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a>
       {{ form.add_person(class_="btn btn-primary") }}
-    </p>
+    </div>
   </form>
 {% endblock %}
 {% block endbody %}
