@@ -228,6 +228,8 @@ def new_brewery():
 def manage_beers(id=None):
     if not current_user.is_admin and not current_user.is_brewer:
         return abort(401)
+    if id and not [i for i in current_user.breweries if i.id == id]:
+        return abort(401)
     form = NewBeer()
     if current_user.is_admin:
         manageable_locations = Brewery.query.all()
