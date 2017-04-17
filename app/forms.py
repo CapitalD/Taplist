@@ -10,6 +10,8 @@ class NewLocation(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
     address = StringField('address', validators=[DataRequired()])
     add_location = SubmitField('Add location')
+    save_changes = SubmitField('Save changes')
+
 
 class LoginForm(FlaskForm):
     email = StringField('email', validators=[DataRequired(), Email()])

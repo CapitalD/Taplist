@@ -42,7 +42,7 @@
     </div>
     <div>
       <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a>
-      {{ form.submit(value="Save changes", class_="btn btn-primary") }}
+      {{ form.save_changes(class_="btn btn-primary") }}
     </div>
   </form>
 {% endblock %}
