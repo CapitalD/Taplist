@@ -12,7 +12,7 @@ def index():
                             all_locations=all_locations)
 
 
-@app.route('/location/<id>', methods=['GET'])
+@app.route('/location/<int:id>', methods=['GET'])
 def view_location(id):
     location = Location.query.get_or_404(id)
     all_locations = Location.query.all()
@@ -84,7 +84,7 @@ def add_location():
                             admin_template=True)
 
 
-@app.route('/person/<id>', methods=['GET', 'POST'])
+@app.route('/person/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_profile(id):
     form = ProfileForm()
@@ -133,7 +133,7 @@ def edit_profile(id):
 
 
 @app.route('/location/taps/edit', methods=['GET'])
-@app.route('/location/<id>/taps/edit', methods=['GET', 'POST'])
+@app.route('/location/<int:id>/taps/edit', methods=['GET', 'POST'])
 @login_required
 def manage_taps(id=None):
     if not current_user.is_admin and not current_user.is_manager:
@@ -175,7 +175,7 @@ def manage_taps(id=None):
                             admin_template=True)
 
 
-@app.route('/tap/<id>/clear', methods=['GET'])
+@app.route('/tap/<int:id>/clear', methods=['GET'])
 @login_required
 def clear_tap(id):
     tap = Tap.query.get_or_404(id)
@@ -185,7 +185,7 @@ def clear_tap(id):
     return redirect(url_for('manage_taps', id=tap.location.id))
 
 
-@app.route('/location/<loc_id>/tap/<tap_id>/delete', methods=['GET'])
+@app.route('/location/<int:loc_id>/tap/<int:tap_id>/delete', methods=['GET'])
 @login_required
 def delete_tap(loc_id, tap_id):
     location = Location.query.get_or_404(loc_id)
@@ -219,7 +219,7 @@ def new_brewery():
                             admin_template=True)
 
 @app.route('/brewery/beers/edit', methods=['GET'])
-@app.route('/brewery/<id>/beers/edit', methods=['GET'])
+@app.route('/brewery/<int:id>/beers/edit', methods=['GET'])
 @login_required
 def manage_beers(id=None):
     if not current_user.is_admin and not current_user.is_brewer:
@@ -242,7 +242,7 @@ def manage_beers(id=None):
                             admin_template=True)
 
 
-@app.route('/brewery/<brewery_id>/beer/new', methods=['POST'])
+@app.route('/brewery/<int:brewery_id>/beer/new', methods=['POST'])
 @login_required
 def new_beer(brewery_id):
     brewery = Brewery.query.get_or_404(brewery_id)
@@ -267,7 +267,7 @@ def new_beer(brewery_id):
                             admin_template=True)
 
 
-@app.route('/beer/<id>/edit', methods=['POST'])
+@app.route('/beer/<int:id>/edit', methods=['POST'])
 @login_required
 def edit_beer(id):
     beer = Beer.query.get_or_404(id)
@@ -291,7 +291,7 @@ def edit_beer(id):
                             admin_template=True)
 
 
-@app.route('/beer/<id>/delete', methods=['GET'])
+@app.route('/beer/<int:id>/delete', methods=['GET'])
 @login_required
 def delete_beer(id):
     beer = Beer.query.get_or_404(id)
@@ -340,7 +340,7 @@ def new_person():
 
 
 @app.route('/brewery/edit', methods=['GET', 'POST'])
-@app.route('/brewery/<id>/edit', methods=['GET', 'POST'])
+@app.route('/brewery/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def manage_brewery(id=None):
     if not current_user.is_admin and not current_user.is_brewer:
@@ -373,7 +373,7 @@ def manage_brewery(id=None):
 
 
 @app.route('/location/edit', methods=['GET', 'POST'])
-@app.route('/location/<id>/edit', methods=['GET', 'POST'])
+@app.route('/location/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def manage_location(id=None):
     if not current_user.is_admin and not current_user.is_manager:
@@ -406,14 +406,14 @@ def manage_location(id=None):
 
 ## AJAX ##
 
-@app.route('/brewery/<id>/beers.json', methods=['GET'])
+@app.route('/brewery/<int:id>/beers.json', methods=['GET'])
 @login_required
 def get_beers_by_brewery(id):
     brewery = Brewery.query.get_or_404(id)
     beers = [(b.id, b.name) for b in brewery.beers.order_by('name')]
     return jsonify(beers)
 
-@app.route('/beer/<id>/detail.json', methods=['GET'])
+@app.route('/beer/<int:id>/detail.json', methods=['GET'])
 @login_required
 def get_beer_details(id):
     beer = Beer.query.get_or_404(id)
