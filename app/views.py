@@ -182,7 +182,11 @@ def manage_taps(id=None):
 @app.route('/tap/<int:id>/clear', methods=['GET'])
 @login_required
 def clear_tap(id):
+    if not current_user.is_admin and not current_user.is_manager:
+        return abort(401)
     tap = Tap.query.get_or_404(id)
+    if id and not [i for i in current_user.locations if i.id == tap.location.id]:
+        return abort(401)
     tap.beer = None
     db.session.add(tap)
     db.session.commit()
@@ -192,7 +196,11 @@ def clear_tap(id):
 @app.route('/location/<int:loc_id>/tap/<int:tap_id>/delete', methods=['GET'])
 @login_required
 def delete_tap(loc_id, tap_id):
+    if not current_user.is_admin and not current_user.is_manager:
+        return abort(401)
     location = Location.query.get_or_404(loc_id)
+    if id and not [i for i in current_user.locations if i.id == location.id]:
+        return abort(401)
     tap = Tap.query.get_or_404(tap_id)
     if tap in location.taps:
         db.session.delete(tap)
