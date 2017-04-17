@@ -351,6 +351,8 @@ def new_person():
 def manage_brewery(id=None):
     if not current_user.is_admin and not current_user.is_brewer:
         return abort(401)
+    if id and not [i for i in current_user.breweries if i.id == id]:
+        return abort(401)
     form = NewBrewery(request.form)
     if form.validate_on_submit():
         brewery = Brewery.query.get_or_404(id)
