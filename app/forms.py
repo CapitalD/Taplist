@@ -85,6 +85,7 @@ class NewBrewery(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
     address = StringField('address', validators=[DataRequired()])
     add_brewery = SubmitField('Add brewery')
+    save_changes = SubmitField('Save changes')
 
 class NewBeer(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
