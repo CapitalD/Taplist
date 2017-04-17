@@ -9,7 +9,7 @@ from . import bcrypt
 class NewLocation(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
     address = StringField('address', validators=[DataRequired()])
-    submit = SubmitField('Add location')
+    add_location = SubmitField('Add location')
 
 class LoginForm(FlaskForm):
     email = StringField('email', validators=[DataRequired(), Email()])
