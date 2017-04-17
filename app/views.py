@@ -386,6 +386,8 @@ def manage_brewery(id=None):
 def manage_location(id=None):
     if not current_user.is_admin and not current_user.is_manager:
         return abort(401)
+    if id and not [i for i in current_user.locations if i.id == id]:
+        return abort(401)
     form = NewLocation(request.form)
     if form.validate_on_submit():
         location = Location.query.get_or_404(id)
