@@ -8,27 +8,27 @@
 
   <form action="" method="post" name="new_brewery">
     {{ form.hidden_tag() }}
-    <p>
-      <label for="name">
+    <div class="form-group{% if form.name.errors %} has-error{% endif %}">
+      <label class="control-label" for="name">
         Brewery name
           {{ form.name(size=80, class_="form-control") }}
           {% for error in form.name.errors %}
-            <span style="color: #f33;">[{{ error }}]</span>
+            <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
-    </p>
-    <p>
-      <label for="address">
+    </div>
+    <div class="form-group{% if form.address.errors %} has-error{% endif %}">
+      <label class="control-label" for="address">
         Brewery address
           {{ form.address(size=80, class_="form-control") }}
           {% for error in form.address.errors %}
-            <span style="color: #f33;">[{{ error }}]</span>
+            <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>
-    </p>
-    <p>
-      <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a> 
-      {{ form.submit(class_="btn btn-primary") }}
-    </p>
+    </div>
+    <div>
+      <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a>
+      {{ form.add_brewery(class_="btn btn-primary") }}
+    </div>
   </form>
 {% endblock %}
