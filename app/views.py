@@ -87,6 +87,8 @@ def add_location():
 @app.route('/person/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_profile(id):
+    if not current_user.is_admin and not current_user.id == id:
+        abort(401)
     form = ProfileForm()
     form.location.query = Location.query.order_by('name')
     form.brewery.query = Brewery.query.order_by('name')
