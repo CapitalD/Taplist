@@ -140,6 +140,8 @@ def edit_profile(id):
 def manage_taps(id=None):
     if not current_user.is_admin and not current_user.is_manager:
         return abort(401)
+    if id and not [i for i in current_user.locations if i.id == id]:
+        return abort(401)
     keg_form = TapKeg()
     new_tap_form = NewTap()
     keg_form.brewery.query = Brewery.query.order_by('name')
