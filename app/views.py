@@ -37,10 +37,10 @@ def login():
                 login_user(user)
                 flash("Log in successful", "success")
                 return redirect(url_for("index"))
-            else:
-                flash("Incorrect email address or password. Please try again.", "error")
+        else:
+            flash("Incorrect email address or password. Please try again.", "error")
     if form.errors:
-        flash("Log in was not successful.  Please try again.", "error")
+        flash("Incorrect email address or password.  Please try again.", "error")
     return render_template('login.html',
                             title='Log in',
                             form=form)
