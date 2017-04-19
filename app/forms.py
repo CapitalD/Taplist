@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField, BooleanField, DecimalField, SelectField, SubmitField, PasswordField, HiddenField
+from wtforms.fields.html5 import EmailField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import DataRequired, NumberRange, Optional, Email, EqualTo
 from models import Person
@@ -14,7 +15,7 @@ class NewLocation(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = StringField('email', validators=[DataRequired(), Email()])
+    email = EmailField('email', validators=[DataRequired(), Email()])
     password = PasswordField('password', validators=[DataRequired()])
     login = SubmitField('Log in')
 
