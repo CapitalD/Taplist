@@ -138,9 +138,9 @@ def edit_profile(id):
 @app.route('/location/<int:id>/taps/edit', methods=['GET', 'POST'])
 @login_required
 def manage_taps(id=None):
-    if not current_user.is_admin and not current_user.is_manager:
+    if current_user.is_manager and id and not [i for i in current_user.locations if i.id == id]:
         return abort(401)
-    if id and not [i for i in current_user.locations if i.id == id]:
+    if not current_user.is_admin and not current_user.is_manager:
         return abort(401)
     keg_form = TapKeg()
     new_tap_form = NewTap()
@@ -182,10 +182,10 @@ def manage_taps(id=None):
 @app.route('/tap/<int:id>/clear', methods=['GET'])
 @login_required
 def clear_tap(id):
-    if not current_user.is_admin and not current_user.is_manager:
-        return abort(401)
     tap = Tap.query.get_or_404(id)
-    if id and not [i for i in current_user.locations if i.id == tap.location.id]:
+    if current_user.is_manager and not [i for i in current_user.locations if i.id == tap.location.id]:
+        return abort(401)
+    if not current_user.is_admin and not current_user.is_manager:
         return abort(401)
     tap.beer = None
     db.session.add(tap)
@@ -196,10 +196,10 @@ def clear_tap(id):
 @app.route('/location/<int:loc_id>/tap/<int:tap_id>/delete', methods=['GET'])
 @login_required
 def delete_tap(loc_id, tap_id):
-    if not current_user.is_admin and not current_user.is_manager:
-        return abort(401)
     location = Location.query.get_or_404(loc_id)
-    if id and not [i for i in current_user.locations if i.id == location.id]:
+    if current_user.is_manager and not [i for i in current_user.locations if i.id == location.id]:
+        return abort(401)
+    if not current_user.is_admin and not current_user.is_manager:
         return abort(401)
     tap = Tap.query.get_or_404(tap_id)
     if tap in location.taps:
@@ -234,9 +234,9 @@ def new_brewery():
 @app.route('/brewery/<int:id>/beers/edit', methods=['GET'])
 @login_required
 def manage_beers(id=None):
-    if not current_user.is_admin and not current_user.is_brewer:
+    if current_user.is_brewer and id and not [i for i in current_user.breweries if i.id == id]:
         return abort(401)
-    if id and not [i for i in current_user.breweries if i.id == id]:
+    if not current_user.is_admin and not current_user.is_brewer:
         return abort(401)
     form = NewBeer()
     if current_user.is_admin:
@@ -259,9 +259,9 @@ def manage_beers(id=None):
 @app.route('/brewery/<int:id>/beer/new', methods=['POST'])
 @login_required
 def new_beer(id):
-    if not current_user.is_admin and not current_user.is_brewer:
+    if current_user.is_brewer and not [i for i in current_user.breweries if i.id == id]:
         return abort(401)
-    if not [i for i in current_user.breweries if i.id == id]:
+    if not current_user.is_admin and not current_user.is_brewer:
         return abort(401)
     brewery = Brewery.query.get_or_404(id)
     new_beer = NewBeer(request.form)
@@ -288,10 +288,10 @@ def new_beer(id):
 @app.route('/beer/<int:id>/edit', methods=['POST'])
 @login_required
 def edit_beer(id):
-    if not current_user.is_admin and not current_user.is_brewer:
-        return abort(401)
     beer = Beer.query.get_or_404(id)
-    if not [i for i in current_user.breweries if i.id == beer.brewery.id]:
+    if current_user.is_brewer and not [i for i in current_user.breweries if i.id == beer.brewery.id]:
+        return abort(401)
+    if not current_user.is_admin and not current_user.is_brewer:
         return abort(401)
     edit_beer = NewBeer(request.form)
     if edit_beer.validate_on_submit():
@@ -316,10 +316,10 @@ def edit_beer(id):
 @app.route('/beer/<int:id>/delete', methods=['GET'])
 @login_required
 def delete_beer(id):
-    if not current_user.is_admin and not current_user.is_brewer:
-        return abort(401)
     beer = Beer.query.get_or_404(id)
-    if not [i for i in current_user.breweries if i.id == beer.brewery.id]:
+    if current_user.is_brewer and not [i for i in current_user.breweries if i.id == beer.brewery.id]:
+        return abort(401)
+    if not current_user.is_admin and not current_user.is_brewer:
         return abort(401)
     brewery_id = beer.brewery.id
     db.session.delete(beer)
@@ -369,9 +369,9 @@ def new_person():
 @app.route('/brewery/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def manage_brewery(id=None):
-    if not current_user.is_admin and not current_user.is_brewer:
+    if current_user.is_brewer and id and not [i for i in current_user.breweries if i.id == id]:
         return abort(401)
-    if id and not [i for i in current_user.breweries if i.id == id]:
+    if not current_user.is_admin and not current_user.is_brewer:
         return abort(401)
     form = NewBrewery(request.form)
     if form.validate_on_submit():
@@ -404,9 +404,9 @@ def manage_brewery(id=None):
 @app.route('/location/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def manage_location(id=None):
-    if not current_user.is_admin and not current_user.is_manager:
+    if current_user.is_manager and id and not [i for i in current_user.locations if i.id == id]:
         return abort(401)
-    if id and not [i for i in current_user.locations if i.id == id]:
+    if not current_user.is_admin and not current_user.is_manager:
         return abort(401)
     form = NewLocation(request.form)
     if form.validate_on_submit():
