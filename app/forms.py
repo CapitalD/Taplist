@@ -5,6 +5,7 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import DataRequired, NumberRange, Optional, Email, EqualTo
 from models import Person
 from flask_login import current_user
+from flask_wtf.file import FileField
 from . import bcrypt
 
 class NewLocation(FlaskForm):
@@ -89,6 +90,9 @@ class NewBrewery(FlaskForm):
     address = StringField('address', validators=[DataRequired()])
     add_brewery = SubmitField('Add brewery')
     save_changes = SubmitField('Save changes')
+
+class UploadBeerXML(FlaskForm):
+    file = FileField('Beer XML')
 
 class NewBeer(FlaskForm):
     name = StringField('name', validators=[DataRequired()])

@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, abort, jsonify, request, f
 from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person, Brewery, Beer
-from forms import NewLocation, LoginForm, ProfileForm, TapKeg, NewTap, NewBrewery, NewBeer
+from forms import NewLocation, LoginForm, ProfileForm, TapKeg, NewTap, NewBrewery, NewBeer, UploadBeerXML
 
 
 @app.route('/')
@@ -239,6 +239,7 @@ def manage_beers(id=None):
     if not current_user.is_admin and not current_user.is_brewer:
         return abort(401)
     form = NewBeer()
+    upload_beerXML = UploadBeerXML()
     if current_user.is_admin:
         manageable_locations = Brewery.query.all()
     elif current_user.is_brewer:
@@ -252,6 +253,7 @@ def manage_beers(id=None):
                             brewery=brewery,
                             new_beer=form,
                             edit_beer=form,
+                            upload_beerXML=upload_beerXML,
                             manageable_locations=manageable_locations,
                             admin_template=True)
 
@@ -449,3 +451,12 @@ def get_beer_details(id):
     beer = Beer.query.get_or_404(id)
     b = [(beer.id, beer.name, beer.style, beer.abv, beer.colour)]
     return jsonify(b)
+
+@app.route('/brewery/<int:id>/beer/new/upload', methods=['POST'])
+@login_required
+def upload_beerXML(id):
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file_stream = request.files['file']
+    return file_stream.read()

@@ -81,62 +81,85 @@
 <!-- NEW MODAL -->
 <div class="modal fade" id="new-beer-modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
-    <form action="/brewery/{{brewery.id}}/beer/new" method="post" name="new_beer">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title">Add a beer</h4>
         </div>
         <div class="modal-body">
-          {{ new_beer.hidden_tag() }}
-          <div class="form-group{% if new_beer.name.errors %} has-error{% endif %}">
-            <label class="control-label" for="name">
-              Beer name
-                {{ new_beer.name(size="40", class_="form-control") }}
-                {% for error in new_beer.name.errors %}
-                  <span class="help-block">&gt; {{ error }}</span>
-                {% endfor %}
-            </label>
-          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div id="recipe_select_container" class="form-group"></div>
 
-          <div class="form-group{% if new_beer.style.errors %} has-error{% endif %}">
-            <label class="control-label" for="style">
-              Beer style
-                {{ new_beer.style(size="40", class_="form-control") }}
-                {% for error in new_beer.style.errors %}
-                  <span class="help-block">&gt; {{ error }}</span>
-                {% endfor %}
-            </label>
-          </div>
-
-          <div class="form-group{% if new_beer.abv.errors %} has-error{% endif %}">
-            <label class="control-label" for="abv">
-              Beer ABV
-                <div class="input-group" style="width: 100px;">
-                  {{ new_beer.abv(size="20", class_="form-control") }}
-                  <div class="input-group-addon">
-                    %
-                  </div>
+              <form action="{{url_for('upload_beerXML', id=brewery.id)}}" name="upload_beerXML" id="upload_beerXML" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label class="control-label" for="file">
+                    Load from beerXML
+                      {{ upload_beerXML.file(size="40", class_="form-control") }}
+                      {% for error in upload_beerXML.file.errors %}
+                        <span class="help-block">&gt; {{ error }}</span>
+                      {% endfor %}
+                  </label>
                 </div>
-                {% for error in new_beer.abv.errors %}
-                  <span class="help-block">&gt; {{ error }}</span>
-                {% endfor %}
-            </label>
-          </div>
 
-          <div class="form-group{% if new_beer.colour.errors %} has-error{% endif %}">
-            <label class="control-label" for="colour">
-              Beer colour
-                <div class="input-group" style="width: 120px;">
-                  {{ new_beer.colour(class_="form-control") }}
-                  <div class="input-group-addon" id="new_beer_colour">
-                    EBC
-                  </div>
-                </div>
-                {% for error in new_beer.colour.errors %}
-                  <span class="help-block">&gt; {{ error }}</span>
-                {% endfor %}
-            </label>
+                <input id="upload_file" type="submit" value="Load" class="btn btn-default">
+
+              </form>
+            </div>
+            <div class="col-md-6">
+                <form action="/brewery/{{brewery.id}}/beer/new" method="post" name="new_beer">
+              {{ new_beer.hidden_tag() }}
+              <div class="form-group{% if new_beer.name.errors %} has-error{% endif %}">
+                <label class="control-label" for="name">
+                  Beer name
+                    {{ new_beer.name(size="40", class_="form-control") }}
+                    {% for error in new_beer.name.errors %}
+                      <span class="help-block">&gt; {{ error }}</span>
+                    {% endfor %}
+                </label>
+              </div>
+
+              <div class="form-group{% if new_beer.style.errors %} has-error{% endif %}">
+                <label class="control-label" for="style">
+                  Beer style
+                    {{ new_beer.style(size="40", class_="form-control") }}
+                    {% for error in new_beer.style.errors %}
+                      <span class="help-block">&gt; {{ error }}</span>
+                    {% endfor %}
+                </label>
+              </div>
+
+              <div class="form-group{% if new_beer.abv.errors %} has-error{% endif %}">
+                <label class="control-label" for="abv">
+                  Beer ABV
+                    <div class="input-group" style="width: 100px;">
+                      {{ new_beer.abv(size="20", class_="form-control") }}
+                      <div class="input-group-addon">
+                        %
+                      </div>
+                    </div>
+                    {% for error in new_beer.abv.errors %}
+                      <span class="help-block">&gt; {{ error }}</span>
+                    {% endfor %}
+                </label>
+              </div>
+
+              <div class="form-group{% if new_beer.colour.errors %} has-error{% endif %}">
+                <label class="control-label" for="colour">
+                  Beer colour
+                    <div class="input-group" style="width: 120px;">
+                      {{ new_beer.colour(class_="form-control") }}
+                      <div class="input-group-addon" id="new_beer_colour">
+                        EBC
+                      </div>
+                    </div>
+                    {% for error in new_beer.colour.errors %}
+                      <span class="help-block">&gt; {{ error }}</span>
+                    {% endfor %}
+                </label>
+              </div>
+
+            </div>
           </div>
 
         </div>
@@ -275,8 +298,79 @@ function update_colour_field(field, label) {
     });
   }
 }
+
+var form = document.forms.namedItem("upload_beerXML");
+var beer_xml_data = "";
+var loaded_recipes = new Array();
+
+form.addEventListener('submit', function(ev) {
+  var form_data = new FormData(form);
+  $.ajax({
+    type: 'POST',
+    url: "{{url_for('upload_beerXML', id=brewery.id)}}",
+    data: form_data,
+    contentType: false,
+    processData: false,
+    dataType: 'xml'
+  }).done(function(data){
+    loaded_recipes.length = 0;
+    var recipes = $('RECIPES', data);
+    recipes.find('RECIPE').each(function(index) {
+      loaded_recipes[index] = [
+        $(this).find('NAME').first().text(),
+        $(this).find('STYLE > NAME').first().text(),
+        $(this).find('EST_ABV').first().text(),
+        $(this).find('EST_COLOR').first().text()
+      ];
+    });
+
+		recipe_count = loaded_recipes.length;
+    recipe_select = "";
+    recipe_select = "<label class=\"control-label\" for=\"recipe_select\">Loaded " + recipe_count + " recipes"
+    recipe_select += "<select class=\"form-control\" name=\"recipe_select\" id=\"recipe_select\">";
+    jQuery.each(loaded_recipes, function(i, val) {
+      recipe_select += "<option value=\""+i+"\">"+loaded_recipes[i][0]+"</option>";
+    });
+    recipe_select += "</select></label><hr>"
+    $("#recipe_select_container").empty().append(recipe_select);
+
+    $("select#recipe_select").on('change', function() {
+      open_beerxml(loaded_recipes,$(this).val());
+    });
+
+    open_beerxml(loaded_recipes,0);
+  }).fail(function(data){
+    alert('error!');
+  });
+  ev.preventDefault();
+});
+
+function open_beerxml(data, nth) {
+  var beer_name = data[nth][0];
+  var beer_style = data[nth][1];
+  var beer_abv = data[nth][2];
+  var beer_colour = data[nth][3];
+  load_recipe(beer_name, beer_style, beer_abv, beer_colour);
+}
+
+function load_recipe(beer_name, beer_style, beer_abv, beer_colour) {
+	var colour_string = beer_colour.split(" ");
+	$("input#name").val(beer_name);
+	$("input#style").val(beer_style);
+	$("input#abv").val(beer_abv.split(" ")[0]);
+
+	switch (colour_string[1]) {
+		case "EBC":
+			$("input#colour").val(colour_string[0]);
+			break;
+		case "SRM":
+			var ebc = parseFloat(ebcFromSrm(colour_string[0])).toFixed(1);
+			$("input#colour").val(ebc);
+			break;
+	}
+  update_colour_field("input#colour", "#new_beer_colour");
+}
+
 </script>
 
-
-</script>
 {% endblock %}
