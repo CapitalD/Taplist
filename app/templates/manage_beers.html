@@ -84,29 +84,37 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Add a beer</h4>
+          <h3 class="modal-title">Add a beer</h3>
         </div>
         <div class="modal-body">
           <div class="row">
             <div class="col-md-6">
-              <div id="recipe_select_container" class="form-group"></div>
-
+                <h4>Load from beerXML</h4>
               <form action="{{url_for('upload_beerXML', id=brewery.id)}}" name="upload_beerXML" id="upload_beerXML" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                  <label class="control-label" for="file">
-                    Load from beerXML
-                      {{ upload_beerXML.file(size="40", class_="form-control") }}
-                      {% for error in upload_beerXML.file.errors %}
-                        <span class="help-block">&gt; {{ error }}</span>
-                      {% endfor %}
+                <div class="input-group form-group">
+                  <label class="input-group-btn">
+                    <span class="btn btn-primary">
+                        Browse&hellip; {{ upload_beerXML.file(class_="form-control", style="display: none;") }}
+                    </span>
+                    {% for error in upload_beerXML.file.errors %}
+                      <span class="help-block">&gt; {{ error }}</span>
+                    {% endfor %}
                   </label>
+                  <input type="text" class="form-control" disabled readonly>
                 </div>
 
-                <input id="upload_file" type="submit" value="Load" class="btn btn-default">
+                <div class="pull-right">
+                  <input id="upload_file" type="submit" value="Load" class="btn btn-default">
+                </div>
 
               </form>
             </div>
             <div class="col-md-6">
+
+                  <h4 id="manual_heading">Add manually</h4>
+
+                <div id="recipe_select_container" class="form-group hidden"></div>
+
                 <form action="/brewery/{{brewery.id}}/beer/new" method="post" name="new_beer">
               {{ new_beer.hidden_tag() }}
               <div class="form-group{% if new_beer.name.errors %} has-error{% endif %}">
@@ -303,6 +311,12 @@ var form = document.forms.namedItem("upload_beerXML");
 var beer_xml_data = "";
 var loaded_recipes = new Array();
 
+$(document).on('change', ':file', function() {
+  var label = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+  $(this).parents('.input-group').find(':text').val(label);
+});
+
+
 form.addEventListener('submit', function(ev) {
   var form_data = new FormData(form);
   $.ajax({
@@ -325,18 +339,28 @@ form.addEventListener('submit', function(ev) {
     });
 
 		recipe_count = loaded_recipes.length;
-    recipe_select = "";
-    recipe_select = "<label class=\"control-label\" for=\"recipe_select\">Loaded " + recipe_count + " recipes"
-    recipe_select += "<select class=\"form-control\" name=\"recipe_select\" id=\"recipe_select\">";
-    jQuery.each(loaded_recipes, function(i, val) {
-      recipe_select += "<option value=\""+i+"\">"+loaded_recipes[i][0]+"</option>";
-    });
-    recipe_select += "</select></label><hr>"
-    $("#recipe_select_container").empty().append(recipe_select);
+    if (recipe_count > 1) {
+      recipe_select = "";
+      recipe_select = "<label class=\"control-label\" for=\"recipe_select\"><h4 id=\"loaded_heading\"> " + recipe_count + " recipes loaded</h4>"
+      recipe_select += "<select class=\"form-control\" name=\"recipe_select\" id=\"recipe_select\">";
+      jQuery.each(loaded_recipes, function(i, val) {
+        recipe_select += "<option value=\""+i+"\">"+loaded_recipes[i][0]+"</option>";
+      });
+      recipe_select += "</select></label><hr>"
+      $("#manual_heading").addClass("hidden");
+      $("#recipe_select_container").empty().append(recipe_select).removeClass("hidden");
 
-    $("select#recipe_select").on('change', function() {
-      open_beerxml(loaded_recipes,$(this).val());
-    });
+      $("select#recipe_select").on('change', function() {
+        open_beerxml(loaded_recipes,$(this).val());
+      });
+    } else if (recipe_count == 1) {
+      recipe_select = "<h4 id=\"loaded_heading\">1 recipe loaded</h4>"
+      $("#manual_heading").addClass("hidden");
+      $("#recipe_select_container").empty().append(recipe_select).removeClass("hidden");
+    } else {
+      $("#manual_heading").removeClass("hidden");
+      $("#recipe_select_container").empty().addClass("hidden");
+    }
 
     open_beerxml(loaded_recipes,0);
   }).fail(function(data){
