@@ -137,7 +137,7 @@ def edit_profile(id):
 @app.route('/location/taps/edit', methods=['GET'])
 @app.route('/location/<int:id>/taps/edit', methods=['GET', 'POST'])
 @login_required
-def manage_taps(id=None):
+def manage_location(id=None):
     if current_user.is_manager and id and not [i for i in current_user.locations if i.id == id]:
         return abort(401)
     if not current_user.is_admin and not current_user.is_manager:
@@ -169,7 +169,7 @@ def manage_taps(id=None):
         location = Location.query.get_or_404(id)
     else:
         location = manageable_locations[0]
-    return render_template('manage_taps.html',
+    return render_template('manage_location.html',
                             title='Manage taps',
                             location=location,
                             taps=location.taps,
@@ -190,7 +190,7 @@ def clear_tap(id):
     tap.beer = None
     db.session.add(tap)
     db.session.commit()
-    return redirect(url_for('manage_taps', id=tap.location.id))
+    return redirect(url_for('manage_location', id=tap.location.id))
 
 
 @app.route('/location/<int:loc_id>/tap/<int:tap_id>/delete', methods=['GET'])
@@ -206,9 +206,9 @@ def delete_tap(loc_id, tap_id):
         db.session.delete(tap)
         db.session.commit()
         flash("Tap removed successfully.", "success")
-        return redirect(url_for('manage_taps', id=location.id))
+        return redirect(url_for('manage_location', id=location.id))
     flash("That tap couldn't be removed for some reason.", "error")
-    return redirect(url_for('manage_taps', id=location.id))
+    return redirect(url_for('manage_location', id=location.id))
 
 
 @app.route('/brewery/new', methods=['GET', 'POST'])
@@ -405,7 +405,7 @@ def manage_brewery(id=None):
 @app.route('/location/edit', methods=['GET', 'POST'])
 @app.route('/location/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
-def manage_location(id=None):
+def edit_location(id=None):
     if current_user.is_manager and id and not [i for i in current_user.locations if i.id == id]:
         return abort(401)
     if not current_user.is_admin and not current_user.is_manager:
@@ -418,7 +418,7 @@ def manage_location(id=None):
         db.session.add(location)
         db.session.commit()
         flash("Location updated successfully", "success")
-        return redirect(url_for('manage_taps', id=location.id))
+        return redirect(url_for('manage_location', id=location.id))
     if current_user.is_admin:
         manageable_locations = Location.query.all()
     elif current_user.is_manager:
@@ -429,7 +429,7 @@ def manage_location(id=None):
         location = manageable_locations[0]
     form.name.data = location.name
     form.address.data = location.address
-    return render_template('manage_location.html',
+    return render_template('edit_location.html',
                             title="Manage location",
                             form=form,
                             location=location,

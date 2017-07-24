@@ -1,0 +1,48 @@
+
+{% extends "layout.html" %}
+{% block body %}
+  <div class="page-header">
+    {% if manageable_locations|length > 1 %}
+      <div class="btn-toolbar pull-right">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Switch location
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            {% for ml in manageable_locations|sort(attribute='name') %}
+              <li><a href="{{ url_for('edit_location', id=ml.id) }}">{{ ml.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+    <h1>Edit details for {{ location.name }}</h1>
+  </div>
+
+  <form action="{{ url_for('edit_location', id=location.id) }}" method="post" name="new_location">
+    {{ form.hidden_tag() }}
+    <div class="form-group{% if form.name.errors %} has-error{% endif %}">
+      <label class="control-label" for="name">
+        Location name
+          {{ form.name(size=80, class_="form-control") }}
+          {% for error in form.name.errors %}
+            <span class="help-block">&gt; {{ error }}</span>
+          {% endfor %}
+      </label>
+    </div>
+    <div class="form-group{% if form.address.errors %} has-error{% endif %}">
+      <label class="control-label" for="address">
+        Location address
+          {{ form.address(size=80, class_="form-control") }}
+          {% for error in form.address.errors %}
+            <span class="help-block">&gt; {{ error }}</span>
+          {% endfor %}
+      </label>
+    </div>
+    <div>
+      <a href="{{ url_for('manage_location', id=location.id) }}" class="btn btn-default">Cancel</a>
+      {{ form.save_changes(class_="btn btn-primary") }}
+    </div>
+  </form>
+{% endblock %}
