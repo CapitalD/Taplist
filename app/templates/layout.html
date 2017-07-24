@@ -17,7 +17,7 @@
   </head>
   <body>
 
-    {% if not request.args.get('fs') == '1' %}
+    {% if request.args.get('nav') == '1' or admin_template %}
     <nav class="navbar navbar-default{{ " navbar-inverse" if admin_template }}">
       <div class="container-fluid">
         <div class="navbar-header">

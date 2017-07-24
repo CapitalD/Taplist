@@ -3,8 +3,8 @@
 
 <div class="page-header">
   <h1>On tap at {{location.name}}
-    {% if not request.args.get('fs') == '1' %}
-      <a href="{{ url_for('view_location', id=location.id, fs=1) }}" class="btn btn-default pull-right hidden-xs"><span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span> Hide header</a></h1>
+    {% if request.args.get('nav') == '1' %}
+      <a href="{{ url_for('view_location', id=location.id) }}" class="btn btn-default pull-right hidden-xs"><span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span> Hide header</a></h1>
     {% endif %}
 </div>
 
@@ -65,11 +65,11 @@
   });
 {% endfor %}
 
-{% if request.args.get('fs') == '1' %}
+{% if request.args.get('nav') != '1' %}
   $(document).on('keyup', function(event) {
     if (event.keyCode === 27) {
       url = window.location.href.split("?")[0]
-      window.location.href = url;
+      window.location.href = url + '?nav=1';
     }
   });
 
