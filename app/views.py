@@ -75,7 +75,7 @@ def add_location():
         db.session.add(location)
         db.session.commit()
         flash("Location created successfully", "success")
-        return redirect(url_for('view_location', id=location.id))
+        return redirect(url_for('manage_location', id=location.id))
     if form.errors:
         flash("Location could not be created. Please correct errors and try again.", "error")
     return render_template('new_location.html',
@@ -222,7 +222,7 @@ def new_brewery():
         db.session.add(brewery)
         db.session.commit()
         flash("Brewery created successfully", "success")
-        return redirect(url_for('index'))
+        return redirect(url_for('manage_beers', id=brewery.id))
     if form.errors:
         flash("The brewery couldn't be added. Please try again.", "error")
     return render_template('new_brewery.html',

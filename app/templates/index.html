@@ -21,3 +21,16 @@
   </div>
 </div>
 {% endblock %}
+{% block endbody %}
+<script type="text/javascript">
+{% if request.args.get('nav') != '1' %}
+  $(document).on('keyup', function(event) {
+    if (event.keyCode === 27) {
+      url = window.location.href.split("?")[0]
+      window.location.href = url + '?nav=1';
+    }
+  });
+{% endif %}
+
+</script>
+{% endblock %}
