@@ -18,7 +18,14 @@
     </div>
   {% endif %}
 
-  <h1>Manage taps at {{ location.name }} <a href="{{ url_for('edit_location', id=location.id) }}" class="btn btn-default"><span class="glyphicon glyphicon-pencil" style="color:#999;"></span></a></h1>
+  <h1>Manage taps at {{ location.name }}
+    <a href="{{ url_for('edit_location', id=location.id) }}" class="btn btn-default"><span class="glyphicon glyphicon-pencil" style="color:#999;"></span></a>
+    {% if current_user.default_location == location.id %}
+      <a href="{{ url_for('set_default_location', id=current_user.id, loc_id=0) }}" class="btn btn-default"><span class="glyphicon glyphicon-star" style="color:#999;"></span></a>
+    {% else %}
+      <a href="{{ url_for('set_default_location', id=current_user.id, loc_id=location.id) }}" class="btn btn-default"><span class="glyphicon glyphicon-star-empty" style="color:#999;"></span></a>
+    {% endif %}
+  </h1>
 
 </div>
 

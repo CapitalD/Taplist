@@ -167,6 +167,8 @@ def manage_location(id=None):
         manageable_locations = Location.query.filter(Location.managers.any(id=current_user.id)).all()
     if id:
         location = Location.query.get_or_404(id)
+    elif current_user.default_location:
+        location = Location.query.get_or_404(current_user.default_location)
     else:
         location = manageable_locations[0]
     return render_template('manage_location.html',
@@ -246,6 +248,8 @@ def manage_beers(id=None):
         manageable_locations = Brewery.query.filter(Brewery.brewers.any(id=current_user.id)).all()
     if id:
         brewery = Brewery.query.get_or_404(id)
+    elif current_user.default_brewery:
+        brewery = Brewery.query.get_or_404(current_user.default_brewery)
     else:
         brewery = manageable_locations[0]
     return render_template('manage_beers.html',
@@ -390,6 +394,8 @@ def manage_brewery(id=None):
         manageable_locations = Brewery.query.filter(Brewery.brewers.any(id=current_user.id)).all()
     if id:
         brewery = Brewery.query.get_or_404(id)
+    elif current_user.default_brewery:
+        brewery = Brewery.query.get_or_404(current_user.default_brewery)
     else:
         brewery = manageable_locations[0]
     form.name.data = brewery.name
@@ -425,6 +431,8 @@ def edit_location(id=None):
         manageable_locations = Location.query.filter(Location.managers.any(id=current_user.id)).all()
     if id:
         location = Location.query.get_or_404(id)
+    elif current_user.default_location:
+        location = Location.query.get_or_404(current_user.default_location)
     else:
         location = manageable_locations[0]
     form.name.data = location.name
@@ -435,6 +443,26 @@ def edit_location(id=None):
                             location=location,
                             manageable_locations=manageable_locations,
                             admin_template=True)
+
+@app.route('/person/<int:id>/defaultlocation/<int:loc_id>', methods=['GET'])
+@login_required
+def set_default_location(id, loc_id):
+    person = Person.query.get_or_404(id)
+    person.default_location = loc_id
+    db.session.add(person)
+    db.session.commit()
+    flash("Default location set", "success")
+    return redirect(url_for('manage_location', id=loc_id))
+
+@app.route('/person/<int:id>/defaultBrewery/<int:brewery_id>', methods=['GET'])
+@login_required
+def set_default_brewery(id, brewery_id):
+    person = Person.query.get_or_404(id)
+    person.default_brewery = brewery_id
+    db.session.add(person)
+    db.session.commit()
+    return redirect(url_for('manage_brewery', id=brewery_id))
+
 
 ## AJAX ##
 

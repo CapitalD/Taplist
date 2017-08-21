@@ -68,6 +68,8 @@ class Person(db.Model):
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     is_manager = db.Column(db.Boolean, default=False, nullable=False)
     is_brewer = db.Column(db.Boolean, default=False, nullable=False)
+    default_location = db.Column(db.Integer)
+    default_brewery = db.Column(db.Integer)
 
     def is_active(self):
         return True
