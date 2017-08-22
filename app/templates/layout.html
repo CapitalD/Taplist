@@ -64,7 +64,6 @@
                   {% endif %}
                   {% if current_user.is_admin or current_user.is_brewer %}
                   <li class="dropdown-header">Brewer</li>
-                  <li><a href="{{ url_for('manage_beers') }}">Manage beers</a></li>
                   <li><a href="{{ url_for('manage_brewery') }}">Manage brewery</a></li>
                   <li role="separator" class="divider"></li>
                   {% endif %}

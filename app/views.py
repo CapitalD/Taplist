@@ -224,7 +224,7 @@ def new_brewery():
         db.session.add(brewery)
         db.session.commit()
         flash("Brewery created successfully", "success")
-        return redirect(url_for('manage_beers', id=brewery.id))
+        return redirect(url_for('manage_brewery', id=brewery.id))
     if form.errors:
         flash("The brewery couldn't be added. Please try again.", "error")
     return render_template('new_brewery.html',
@@ -235,7 +235,7 @@ def new_brewery():
 @app.route('/brewery/beers/edit', methods=['GET'])
 @app.route('/brewery/<int:id>/beers/edit', methods=['GET'])
 @login_required
-def manage_beers(id=None):
+def manage_brewery(id=None):
     if current_user.is_brewer and id and not [i for i in current_user.breweries if i.id == id]:
         return abort(401)
     if not current_user.is_admin and not current_user.is_brewer:
@@ -252,8 +252,8 @@ def manage_beers(id=None):
         brewery = Brewery.query.get_or_404(current_user.default_brewery)
     else:
         brewery = manageable_locations[0]
-    return render_template('manage_beers.html',
-                            title="Manage beers",
+    return render_template('manage_brewery.html',
+                            title="Manage brewery",
                             brewery=brewery,
                             new_beer=form,
                             edit_beer=form,
@@ -280,11 +280,11 @@ def new_beer(id):
         db.session.add(beer)
         db.session.commit()
         flash("Beer created successfully", "success")
-        return redirect(url_for('manage_beers', id=brewery.id))
+        return redirect(url_for('manage_brewery', id=brewery.id))
     edit_beer = NewBeer()
     flash("The new beer couldn't be created. Please try again.", "error")
-    return render_template('manage_beers.html',
-                            title="Manage beers",
+    return render_template('manage_brewery.html',
+                            title="Manage brewery",
                             brewery=brewery,
                             new_beer=new_beer,
                             edit_beer=edit_beer,
@@ -308,11 +308,11 @@ def edit_beer(id):
         db.session.add(beer)
         db.session.commit()
         flash("Beer updated successfully", "success")
-        return redirect(url_for('manage_beers', id=beer.brewery.id))
+        return redirect(url_for('manage_brewery', id=beer.brewery.id))
     new_beer = NewBeer()
     flash("Changes to the beer could not be saved. Please try again.", "error")
-    return render_template('manage_beers.html',
-                            title="Manage beers",
+    return render_template('manage_brewery.html',
+                            title="Manage brewery",
                             brewery=beer.brewery,
                             new_beer=new_beer,
                             edit_beer=edit_beer,
@@ -331,7 +331,7 @@ def delete_beer(id):
     db.session.delete(beer)
     db.session.commit()
     flash("Beer removed successfully.", "success")
-    return redirect(url_for('manage_beers', id=brewery_id))
+    return redirect(url_for('manage_brewery', id=brewery_id))
 
 
 @app.route('/person/new', methods=['GET', 'POST'])
@@ -374,7 +374,7 @@ def new_person():
 @app.route('/brewery/edit', methods=['GET', 'POST'])
 @app.route('/brewery/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
-def manage_brewery(id=None):
+def edit_brewery(id=None):
     if current_user.is_brewer and id and not [i for i in current_user.breweries if i.id == id]:
         return abort(401)
     if not current_user.is_admin and not current_user.is_brewer:
@@ -387,7 +387,7 @@ def manage_brewery(id=None):
         db.session.add(brewery)
         db.session.commit()
         flash("Brewery updated successfully", "success")
-        return redirect(url_for('manage_beers', id=brewery.id))
+        return redirect(url_for('manage_brewery', id=brewery.id))
     if current_user.is_admin:
         manageable_locations = Brewery.query.all()
     elif current_user.is_brewer:
@@ -400,8 +400,8 @@ def manage_brewery(id=None):
         brewery = manageable_locations[0]
     form.name.data = brewery.name
     form.address.data = brewery.address
-    return render_template('manage_brewery.html',
-                            title="Manage brewery",
+    return render_template('edit_brewery.html',
+                            title="Edit brewery",
                             form=form,
                             brewery=brewery,
                             manageable_locations=manageable_locations,
