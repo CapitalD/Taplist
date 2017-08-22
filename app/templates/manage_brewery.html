@@ -266,8 +266,12 @@
   $()
 {% endfor %}
 
-$("input#colour").on("input", function() {
-  update_colour_field("input#colour", "#new_beer_colour");
+$("form[name='new_beer'] input#colour").on("input", function() {
+  update_colour_field("form[name='new_beer'] input#colour", "#new_beer_colour");
+});
+
+$("form[name='edit_beer'] input#colour").on("input", function() {
+  update_colour_field("form[name='edit_beer'] input#colour", "#edit_beer_colour");
 });
 
 {% if new_beer.errors %}
