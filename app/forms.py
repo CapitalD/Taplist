@@ -11,6 +11,7 @@ from . import bcrypt
 class NewLocation(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
     address = StringField('address', validators=[DataRequired()])
+    private = BooleanField('private')
     add_location = SubmitField('Add location')
     save_changes = SubmitField('Save changes')
 

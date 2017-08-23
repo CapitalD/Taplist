@@ -25,6 +25,15 @@
           {% endfor %}
       </label>
     </div>
+    <div class="form-group{% if form.private.errors %} has-error{% endif %}">
+      <label class="control-label" for="address">
+        Private?
+        {{ form.private }}
+          {% for error in form.private.errors %}
+            <span class="help-block">&gt; {{ error }}</span>
+          {% endfor %}
+      </label>
+    </div>
     <div>
       <a href="{{ url_for('index') }}" class="btn btn-default">Cancel</a>
       {{ form.add_location(class_="btn btn-primary") }}

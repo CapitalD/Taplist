@@ -40,6 +40,15 @@
           {% endfor %}
       </label>
     </div>
+    <div class="form-group{% if form.private.errors %} has-error{% endif %}">
+      <label class="control-label" for="address">
+        Private?
+        {{ form.private(checked=location.private) }}
+          {% for error in form.private.errors %}
+            <span class="help-block">&gt; {{ error }}</span>
+          {% endfor %}
+      </label>
+    </div>
     <div>
       <a href="{{ url_for('manage_location', id=location.id) }}" class="btn btn-default">Cancel</a>
       {{ form.save_changes(class_="btn btn-primary") }}

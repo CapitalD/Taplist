@@ -7,7 +7,7 @@ from forms import NewLocation, LoginForm, ProfileForm, TapKeg, NewTap, NewBrewer
 
 @app.route('/')
 def index():
-    all_locations = Location.query.all()
+    all_locations = Location.query.filter_by(private=False).all()
     return render_template('index.html',
                             all_locations=all_locations)
 
@@ -69,7 +69,7 @@ def add_location():
         return abort(401)
     form = NewLocation()
     if form.validate_on_submit():
-        location = Location(name=form.name.data, address=form.address.data)
+        location = Location(name=form.name.data, address=form.address.data, private=form.private.data)
         db.session.add(location)
         db.session.commit()
         flash("Location created successfully", "success")
@@ -419,6 +419,7 @@ def edit_location(id=None):
         location = Location.query.get_or_404(id)
         location.name = form.name.data
         location.address = form.address.data
+        location.private = form.private.data
         db.session.add(location)
         db.session.commit()
         flash("Location updated successfully", "success")
@@ -435,6 +436,7 @@ def edit_location(id=None):
         location = manageable_locations[0]
     form.name.data = location.name
     form.address.data = location.address
+    form.private.data = location.private
     return render_template('edit_location.html',
                             title="Manage location",
                             form=form,

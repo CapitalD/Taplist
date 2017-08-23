@@ -24,6 +24,7 @@ class Location(db.Model):
     address = db.Column(db.String(255))
     taps = db.relationship('Tap', backref='location', lazy='dynamic')
     managers = db.relationship('Person', secondary=managers, lazy='subquery', backref=db.backref('locations', lazy=True))
+    private = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<Location %r>' % (self.name)
