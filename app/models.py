@@ -21,6 +21,7 @@ managers = db.Table('managers',
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
+    short_name = db.Column(db.String(255), unique=True)
     address = db.Column(db.String(255))
     taps = db.relationship('Tap', backref='location', lazy='dynamic')
     managers = db.relationship('Person', secondary=managers, lazy='subquery', backref=db.backref('locations', lazy=True))

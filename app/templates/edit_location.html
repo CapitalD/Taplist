@@ -20,13 +20,22 @@
     <h1>Edit details for {{ location.name }}</h1>
   </div>
 
-  <form action="{{ url_for('edit_location', id=location.id) }}" method="post" name="new_location">
+  <form action="{{ url_for('edit_location', id=location.id) }}" method="post" name="edit_location">
     {{ form.hidden_tag() }}
     <div class="form-group{% if form.name.errors %} has-error{% endif %}">
       <label class="control-label" for="name">
         Location name
           {{ form.name(size=80, class_="form-control") }}
           {% for error in form.name.errors %}
+            <span class="help-block">&gt; {{ error }}</span>
+          {% endfor %}
+      </label>
+    </div>
+    <div class="form-group{% if form.short_name.errors %} has-error{% endif %}">
+      <label class="control-label" for="short_name">
+        Location short name
+          {{ form.short_name(size=80, class_="form-control") }}
+          {% for error in form.short_name.errors %}
             <span class="help-block">&gt; {{ error }}</span>
           {% endfor %}
       </label>

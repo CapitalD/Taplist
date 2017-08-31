@@ -3,18 +3,30 @@ from wtforms import StringField, RadioField, BooleanField, DecimalField, SelectF
 from wtforms.fields.html5 import EmailField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import DataRequired, NumberRange, Optional, Email, EqualTo
-from models import Person
+from models import Person, Location
 from flask_login import current_user
 from flask_wtf.file import FileField
 from . import bcrypt
 
 class NewLocation(FlaskForm):
+    id = HiddenField('id')
     name = StringField('name', validators=[DataRequired()])
+    short_name = StringField('short_name')
     address = StringField('address', validators=[DataRequired()])
     private = BooleanField('private')
     add_location = SubmitField('Add location')
     save_changes = SubmitField('Save changes')
 
+    def validate(self):
+        if not super(NewLocation, self).validate():
+            return False
+        if self.short_name.data:
+            existing_location = Location.query.filter_by(short_name=self.short_name.data).first()
+            if existing_location and not (int(existing_location.id) == int(self.id.data)):
+                msg = 'That short name already exists.  Please choose a different one.'
+                self.short_name.errors.append(msg)
+                return False
+        return True
 
 class LoginForm(FlaskForm):
     email = EmailField('email', validators=[DataRequired(), Email()])

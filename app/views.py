@@ -3,7 +3,7 @@ from . import app, db, login_manager, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from models import Location, Tap, Person, Brewery, Beer
 from forms import NewLocation, LoginForm, ProfileForm, TapKeg, NewTap, NewBrewery, NewBeer, UploadBeerXML
-
+from .helper_functions import get_manageable_locations, get_place
 
 @app.route('/')
 def index():
@@ -21,6 +21,16 @@ def view_location(id):
                             title=location.name,
                             location=location)
 
+@app.route('/location/<string:name>', methods=['GET'])
+def view_location_by_name(name):
+    location = Location.query.filter_by(short_name=name).first()
+    if not location:
+        abort(404)
+    if request.args.get('fs') == '1':
+        flash('Press ESC to exit fullscreen','info')
+    return render_template('view_location.html',
+                            title=location.name,
+                            location=location)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -159,16 +169,8 @@ def manage_location(id=None):
         flash("Tap added successfully", "success")
     if new_tap_form.errors:
         flash("A new tap couldn't be added. Please try again.", "error")
-    if current_user.is_admin:
-        manageable_locations = Location.query.all()
-    elif current_user.is_manager:
-        manageable_locations = Location.query.filter(Location.managers.any(id=current_user.id)).all()
-    if id:
-        location = Location.query.get_or_404(id)
-    elif current_user.default_location:
-        location = Location.query.get_or_404(current_user.default_location)
-    else:
-        location = manageable_locations[0]
+    manageable_locations = get_manageable_locations("location")
+    location = get_place("location", id, manageable_locations)
     return render_template('manage_location.html',
                             title='Manage taps',
                             location=location,
@@ -240,16 +242,8 @@ def manage_brewery(id=None):
         return abort(401)
     form = NewBeer()
     upload_beerXML = UploadBeerXML()
-    if current_user.is_admin:
-        manageable_locations = Brewery.query.all()
-    elif current_user.is_brewer:
-        manageable_locations = Brewery.query.filter(Brewery.brewers.any(id=current_user.id)).all()
-    if id:
-        brewery = Brewery.query.get_or_404(id)
-    elif current_user.default_brewery:
-        brewery = Brewery.query.get_or_404(current_user.default_brewery)
-    else:
-        brewery = manageable_locations[0]
+    manageable_locations = get_manageable_locations("brewery")
+    brewery = get_place("brewery", id, manageable_locations)
     return render_template('manage_brewery.html',
                             title="Manage brewery",
                             brewery=brewery,
@@ -386,16 +380,8 @@ def edit_brewery(id=None):
         db.session.commit()
         flash("Brewery updated successfully", "success")
         return redirect(url_for('manage_brewery', id=brewery.id))
-    if current_user.is_admin:
-        manageable_locations = Brewery.query.all()
-    elif current_user.is_brewer:
-        manageable_locations = Brewery.query.filter(Brewery.brewers.any(id=current_user.id)).all()
-    if id:
-        brewery = Brewery.query.get_or_404(id)
-    elif current_user.default_brewery:
-        brewery = Brewery.query.get_or_404(current_user.default_brewery)
-    else:
-        brewery = manageable_locations[0]
+    manageable_locations = get_manageable_locations("brewery")
+    brewery = get_place("brewery", id, manageable_locations)
     form.name.data = brewery.name
     form.address.data = brewery.address
     return render_template('edit_brewery.html',
@@ -418,23 +404,18 @@ def edit_location(id=None):
     if form.validate_on_submit():
         location = Location.query.get_or_404(id)
         location.name = form.name.data
+        location.short_name = form.short_name.data
         location.address = form.address.data
         location.private = form.private.data
         db.session.add(location)
         db.session.commit()
         flash("Location updated successfully", "success")
         return redirect(url_for('manage_location', id=location.id))
-    if current_user.is_admin:
-        manageable_locations = Location.query.all()
-    elif current_user.is_manager:
-        manageable_locations = Location.query.filter(Location.managers.any(id=current_user.id)).all()
-    if id:
-        location = Location.query.get_or_404(id)
-    elif current_user.default_location:
-        location = Location.query.get_or_404(current_user.default_location)
-    else:
-        location = manageable_locations[0]
+    manageable_locations = get_manageable_locations("location")
+    location = get_place("location", id, manageable_locations)
+    form.id.data = location.id
     form.name.data = location.name
+    form.short_name.data = location.short_name
     form.address.data = location.address
     form.private.data = location.private
     return render_template('edit_location.html',

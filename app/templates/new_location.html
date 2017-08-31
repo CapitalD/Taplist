@@ -16,6 +16,15 @@
           {% endfor %}
       </label>
     </div>
+    <div class="form-group{% if form.short_name.errors %} has-error{% endif %}">
+      <label class="control-label" for="short_name">
+        Location short name
+          {{ form.short_name(size=80, class_="form-control") }}
+          {% for error in form.short_name.errors %}
+            <span class="help-block">&gt; {{ error }}</span>
+          {% endfor %}
+      </label>
+    </div>
     <div class="form-group{% if form.address.errors %} has-error{% endif %}">
       <label class="control-label" for="address">
         Location address
